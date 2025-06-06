@@ -1,29 +1,52 @@
-import React from 'react';
+import React from "react";
+import { ArrowRight } from "lucide-react";
+
+const sideProducts = [
+    {
+        title: "New Gen X-Bud",
+        image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80",
+    },
+    {
+        title: "Light Grey Surface Headphone",
+        image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80",
+    },
+];
 
 const SideCards = () => (
-    <>
-        <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center justify-center">
-            <div className="font-bold text-lg mb-2">New Gen X-Bud</div>
-            <img src="/placeholder.svg" alt="X-Bud" className="w-24 h-24 object-contain rounded-xl mb-2" />
-            <button
-                onClick={() => alert('Viewing New Gen X-Bud details')}
-                className="mt-2 bg-black text-white rounded-full px-4 py-2 flex items-center gap-1 hover:bg-gray-800 transition"
-            >
-                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-            </button>
+    <aside className="flex flex-col gap-6">
+        {/* Popular Colors */}
+        <div className="bg-white rounded-2xl shadow p-4 flex flex-col gap-3 items-start">
+            <span className="font-semibold text-gray-700 mb-2">Popular Colors</span>
+            <div className="flex gap-2">
+                <span className="w-5 h-5 rounded-full bg-pastel-400 inline-block"></span>
+                <span className="w-5 h-5 rounded-full bg-red-400 inline-block"></span>
+                <span className="w-5 h-5 rounded-full bg-green-400 inline-block"></span>
+                <span className="w-5 h-5 rounded-full bg-yellow-400 inline-block"></span>
+                <span className="w-5 h-5 rounded-full bg-cyan-300 inline-block"></span>
+            </div>
         </div>
-        <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center justify-center">
-            <div className="font-bold text-lg mb-2">Light Grey Surface Headphone</div>
-            <img src="/placeholder.svg" alt="Surface Headphone" className="w-24 h-24 object-contain rounded-xl mb-2" />
-            <div className="text-xs text-gray-500">Boosted with bass</div>
-            <button
-                onClick={() => alert('Viewing Light Grey Surface Headphone details')}
-                className="mt-2 bg-black text-white rounded-full px-4 py-2 flex items-center gap-1 hover:bg-gray-800 transition"
+        {/* Product Highlights */}
+        {sideProducts.map((prod) => (
+            <div
+                key={prod.title}
+                className="bg-white rounded-2xl shadow p-4 flex flex-col gap-2 items-start hover:shadow-lg transition group cursor-pointer"
             >
-                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-            </button>
-        </div>
-    </>
+                <img
+                    src={prod.image}
+                    alt={prod.title}
+                    className="w-full h-28 object-cover rounded-xl mb-2"
+                />
+                <div className="flex items-center justify-between w-full">
+                    <span className="font-semibold text-gray-800 text-base">
+                        {prod.title}
+                    </span>
+                    <button className="ml-auto bg-gray-100 hover:bg-lime-200 rounded-full p-2 transition">
+                        <ArrowRight className="w-5 h-5 text-gray-700" />
+                    </button>
+                </div>
+            </div>
+        ))}
+    </aside>
 );
 
 export default SideCards;

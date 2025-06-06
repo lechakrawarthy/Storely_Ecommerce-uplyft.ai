@@ -8,7 +8,7 @@ const ChatbotFloat = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hi! I'm BookBuddy 📚 How can I help you find your next great read?",
+      text: "Hi! I'm Storely AI 🛍️ Your smart shopping assistant! I can help you find amazing electronics, books, and textiles. What are you looking for today?",
       sender: 'bot',
       timestamp: new Date()
     }
@@ -31,7 +31,7 @@ const ChatbotFloat = () => {
     setTimeout(() => {
       const botResponse = {
         id: messages.length + 2,
-        text: "That's a great question! Let me help you find some perfect books. What genre are you in the mood for? 📖",
+        text: "Great question! I can help you discover products across our three main categories: Electronics (headphones, smartwatches, gadgets), Books (bestsellers, educational, fiction), and Textiles (clothing, accessories). What type of product interests you most? 📱👕📚",
         sender: 'bot',
         timestamp: new Date()
       };
@@ -47,20 +47,20 @@ const ChatbotFloat = () => {
           onClick={() => setIsOpen(!isOpen)}
           className="chatbot-float w-14 h-14 bg-gradient-to-r from-pastel-500 to-sage-500 text-white rounded-full shadow-soft-hover flex items-center justify-center text-xl hover:from-pastel-600 hover:to-sage-600 transition-all duration-300"
         >
-          {isOpen ? <X size={24} /> : '📚'}
+          {isOpen ? <X size={24} /> : '🛍️'}
         </button>
       </div>
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 h-96 glass-dark rounded-2xl shadow-soft overflow-hidden border border-pastel-200/30">
+        <div className="fixed bottom-24 right-6 z-50 w-80 h-96 glass-card rounded-2xl shadow-soft overflow-hidden border border-pastel-200/30">
           {/* Header */}
           <div className="bg-gradient-to-r from-pastel-500/90 to-sage-500/90 p-4 text-white backdrop-blur-sm">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gold-200/30 rounded-full flex items-center justify-center backdrop-blur-sm">📚</div>
+              <div className="w-8 h-8 bg-gold-200/30 rounded-full flex items-center justify-center backdrop-blur-sm">🛍️</div>
               <div>
-                <h3 className="font-semibold text-cream-50">BookBuddy AI</h3>
-                <p className="text-xs text-cream-100/90">Your Smart Book Assistant</p>
+                <h3 className="font-semibold text-cream-50">Storely AI</h3>
+                <p className="text-xs text-cream-100/90">Your Smart Shopping Assistant</p>
               </div>
             </div>
           </div>
@@ -73,11 +73,10 @@ const ChatbotFloat = () => {
                 className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-xs p-3 rounded-2xl backdrop-blur-sm ${
-                    msg.sender === 'user'
-                      ? 'bg-gradient-to-r from-pastel-400/80 to-sage-400/80 text-cream-50 shadow-sm'
-                      : 'glass text-sage-800 border border-cream-200/50'
-                  }`}
+                  className={`max-w-xs p-3 rounded-2xl backdrop-blur-sm ${msg.sender === 'user'
+                    ? 'bg-gradient-to-r from-pastel-400/80 to-sage-400/80 text-cream-50 shadow-sm'
+                    : 'glass text-sage-800 border border-cream-200/50'
+                    }`}
                 >
                   <p className="text-sm">{msg.text}</p>
                 </div>
@@ -93,7 +92,7 @@ const ChatbotFloat = () => {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                placeholder="Ask about books..."
+                placeholder="Ask about electronics, books, textiles..."
                 className="flex-1 px-3 py-2 bg-cream-100/90 backdrop-blur-sm rounded-lg text-sm text-sage-800 placeholder-sage-500 focus:outline-none focus:ring-2 focus:ring-pastel-400/50 border border-cream-200/50"
               />
               <button

@@ -1,49 +1,30 @@
 import React from 'react';
-import SearchBar from '../components/SearchBar';
+import Navigation from '../components/Navigation';
 import HeroCard from '../components/HeroCard';
+import ProductGrid from '../components/BooksSection';
+import CategorySection from '../components/CategorySection';
+import FAQ from '../components/FAQ';
 import ChatbotSection from '../components/ChatbotSection';
-import ProductStats from '../components/ProductStats';
-import SideCards from '../components/SideCards';
-import UserProfile from '../components/UserProfile';
-import BookCategories from '../components/BookCategories';
-import BooksSection from '../components/BooksSection';
-import SectionContainer from '../components/SectionContainer';
+import Footer from '../components/Footer';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex flex-col">
-      {/* Main Content */}
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 pt-28 pb-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left: Hero, Search, Chatbot, and Social */}
-        <section className="lg:col-span-2 flex flex-col gap-6">
-          <SectionContainer>
-            <HeroCard />
-          </SectionContainer>
-          <SectionContainer title="Search">
-            <SearchBar />
-          </SectionContainer>
-          <SectionContainer title="Categories">
-            <BookCategories />
-          </SectionContainer>
-          <SectionContainer title="Explore Products">
-            <BooksSection />
-          </SectionContainer>
-          <SectionContainer title="Chat with BookBuddy">
-            <ChatbotSection />
-          </SectionContainer>
-          <SectionContainer title="Stats">
-            <ProductStats />
-          </SectionContainer>
-        </section>
-        {/* Right: Side Cards */}
-        <aside className="flex flex-col gap-6">
-          <SectionContainer title="Side Cards">
-            <SideCards />
-          </SectionContainer>
-        </aside>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative flex flex-col overflow-x-hidden">
+      {/* Background decoration for glass effect */}
+      <div className="fixed inset-0 bg-gradient-to-br from-blue-50/30 via-indigo-50/20 to-purple-50/30 pointer-events-none"></div>
+      <div className="fixed top-20 left-10 w-32 h-32 bg-pastel-200/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="fixed top-40 right-20 w-24 h-24 bg-purple-200/20 rounded-full blur-2xl pointer-events-none"></div>
+      <div className="fixed bottom-32 left-1/4 w-40 h-40 bg-indigo-200/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <Navigation />
+      <main className="relative z-10 flex-1 max-w-7xl mx-auto w-full px-4 flex flex-col gap-10 pt-28 pb-24">
+        <HeroCard />
+        <CategorySection />
+        <ProductGrid />
+        <FAQ />
       </main>
-      {/* User Profile (top right) */}
-      <UserProfile />
+      <Footer />
+      <ChatbotSection />
     </div>
   );
 };

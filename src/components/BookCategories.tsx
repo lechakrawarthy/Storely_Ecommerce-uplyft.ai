@@ -1,68 +1,64 @@
-
 import React from 'react';
-import { Heart, Zap, Ghost, Smile, Globe, Sparkles } from 'lucide-react';
+import { Sparkles, Heart, Zap } from 'lucide-react';
 
-const BookCategories = () => {
-  const categories = [
-    { name: 'Kids', icon: Sparkles, color: 'gold', books: 12 },
-    { name: 'Love', icon: Heart, color: 'pastel', books: 8 },
-    { name: 'Thriller', icon: Zap, color: 'sage', books: 15 },
-    { name: 'Horror', icon: Ghost, color: 'cream', books: 6 },
-    { name: 'Humorous', icon: Smile, color: 'gold', books: 10 },
-    { name: 'Adventure', icon: Globe, color: 'sage', books: 9 },
-  ];
+const categories = [
+  {
+    name: 'Kids',
+    icon: <Sparkles className="w-7 h-7 text-green-500 mb-2" />,
+    books: 12,
+    bg: 'from-white to-green-50',
+    text: 'text-green-700',
+  },
+  {
+    name: 'Love',
+    icon: <Heart className="w-7 h-7 text-pink-400 mb-2" />,
+    books: 8,
+    bg: 'from-white to-pink-50',
+    text: 'text-pink-500',
+  },
+  {
+    name: 'Thriller',
+    icon: <Zap className="w-7 h-7 text-yellow-400 mb-2" />,
+    books: 15,
+    bg: 'from-white to-yellow-50',
+    text: 'text-yellow-500',
+  },
+];
 
-  return (
-    <section id="categories" className="py-20 bg-gradient-to-br from-cream-50 to-pastel-50 relative overflow-hidden">
-      {/* Floating background elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="floating-book top-24 left-10 text-2xl opacity-20">📚</div>
-        <div className="floating-book top-32 right-20 text-2xl opacity-20">📖</div>
-        <div className="floating-book bottom-40 left-1/4 text-2xl opacity-20">📘</div>
+const BookCategories = () => (
+  <section id="categories" className="w-full py-8">
+    <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl mx-auto">
+      <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+        Categories
+      </h2>
+      <div className="flex items-center justify-center gap-2 mb-2">
+        <span className="text-2xl">📚</span>
+        <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+          Explore by Category
+        </span>
+        <span className="text-2xl">📖</span>
       </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="glass-gold p-3 rounded-full">
-              <div className="text-3xl">📚</div>
+      <p className="text-base text-green-700 text-center mb-8">
+        Find your perfect read in these popular genres
+      </p>
+      <div className="flex flex-col sm:flex-row gap-6 justify-center">
+        {categories.map((cat) => (
+          <div
+            key={cat.name}
+            className={`flex-1 bg-gradient-to-br ${cat.bg} rounded-2xl p-6 flex flex-col items-center min-w-[180px]`}
+          >
+            {cat.icon}
+            <div className={`font-semibold text-lg mb-1 ${cat.text}`}>
+              {cat.name}
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold font-poppins bg-gradient-to-r from-pastel-600 to-sage-600 bg-clip-text text-transparent">
-              Explore by Category
-            </h2>
+            <div className="text-sm text-gray-500">
+              {cat.books} books available
+            </div>
           </div>
-          <p className="text-lg text-sage-600">Find your perfect read in these popular genres</p>
-        </div>
-
-        <div className="overflow-x-auto pb-4">
-          <div className="flex space-x-6 min-w-max px-4">
-            {categories.map((category, index) => {
-              const IconComponent = category.icon;
-              return (
-                <div
-                  key={category.name}
-                  className="category-card glass p-6 rounded-2xl min-w-[200px] cursor-pointer shadow-soft hover:shadow-soft-hover transition-all duration-300 group hover:bg-gradient-to-br hover:from-cream-100/80 hover:to-pastel-100/60"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="text-center">
-                    <IconComponent className={`w-8 h-8 text-${category.color}-600 mx-auto mb-4 group-hover:text-${category.color}-700 transition-colors duration-300`} />
-                    <h3 className="font-semibold text-sage-800 mb-2 group-hover:text-pastel-700 transition-colors duration-300">{category.name}</h3>
-                    <p className="text-sm text-sage-600 group-hover:text-sage-700 transition-colors duration-300">{category.books} books available</p>
-                    <div className={`w-full h-2 bg-${category.color}-200 rounded-full mt-4`}>
-                      <div 
-                        className={`h-2 bg-gradient-to-r from-${category.color}-400 to-${category.color}-500 rounded-full transition-all duration-500 group-hover:from-${category.color}-500 group-hover:to-${category.color}-600`} 
-                        style={{ width: '70%' }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        ))}
       </div>
-    </section>
-  );
-};
+    </div>
+  </section>
+);
 
 export default BookCategories;
