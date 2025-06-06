@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Wand } from 'lucide-react';
 
@@ -24,7 +23,7 @@ const ChatbotSection = () => {
 
   const suggestions = [
     "🔍 Find mystery books",
-    "📚 Recommend bestsellers under ₹500", 
+    "📚 Recommend bestsellers under ₹500",
     "👩‍🏫 Study help books",
     "💖 Romance novels",
     "🐉 Fantasy adventures",
@@ -64,7 +63,7 @@ const ChatbotSection = () => {
       ];
 
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
+
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: randomResponse,
@@ -87,28 +86,28 @@ const ChatbotSection = () => {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: true 
+      hour12: true
     });
   };
 
   return (
-    <section id="chatbot" className="min-h-screen bg-gradient-to-br from-white via-lavender-50 to-mint-50 book-pattern py-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div id="chatbot" className="bg-white rounded-3xl shadow-xl p-8 relative">
+      <div className="flex flex-col gap-6">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h2 className="text-4xl sm:text-5xl font-bold font-poppins bg-gradient-to-r from-lavender-600 to-mint-600 bg-clip-text text-transparent mb-4">
             Chat with BookBuddy
           </h2>
-          <p className="text-xl text-gray-600">Your AI book concierge is ready to help! 🤖✨</p>
+          <p className="text-lg text-gray-600">Your AI book concierge is ready to help! 🤖✨</p>
         </div>
 
         {/* Chat Container */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-lavender-100">
+        <div className="overflow-hidden">
           {/* Chat Header */}
-          <div className="bg-gradient-to-r from-lavender-500 to-mint-500 p-4 flex justify-between items-center">
+          <div className="bg-gradient-to-r from-lavender-500 to-mint-500 p-4 flex justify-between items-center rounded-t-2xl">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl">
                 🤖
@@ -118,7 +117,7 @@ const ChatbotSection = () => {
                 <p className="text-white/80 text-sm">Online & Ready to Help!</p>
               </div>
             </div>
-            <button 
+            <button
               onClick={resetChat}
               className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors duration-200 hover:scale-110 animate-sparkle"
               title="Reset Chat"
@@ -128,7 +127,7 @@ const ChatbotSection = () => {
           </div>
 
           {/* Messages Area */}
-          <div className="h-96 overflow-y-auto p-4 space-y-4">
+          <div className="h-80 overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -144,11 +143,10 @@ const ChatbotSection = () => {
                     </div>
                   )}
                   <div
-                    className={`px-4 py-3 rounded-2xl ${
-                      message.sender === 'user'
-                        ? 'bg-gradient-to-r from-lavender-500 to-mint-500 text-white ml-auto'
-                        : 'bg-lavender-100 text-gray-800'
-                    } shadow-lg`}
+                    className={`px-4 py-3 rounded-2xl ${message.sender === 'user'
+                      ? 'bg-gradient-to-r from-lavender-500 to-mint-500 text-white ml-auto'
+                      : 'bg-lavender-100 text-gray-800'
+                      } shadow-lg`}
                   >
                     <p className="text-sm leading-relaxed">{message.text}</p>
                   </div>
@@ -183,7 +181,7 @@ const ChatbotSection = () => {
           </div>
 
           {/* Suggestion Chips */}
-          <div className="px-4 py-2 border-t border-lavender-100">
+          <div className="px-4 py-2">
             <div className="flex flex-wrap gap-2">
               {suggestions.map((suggestion, index) => (
                 <button
@@ -198,7 +196,7 @@ const ChatbotSection = () => {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 border-t border-lavender-100">
+          <div className="p-4">
             <div className="flex space-x-3">
               <input
                 type="text"
@@ -219,7 +217,7 @@ const ChatbotSection = () => {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

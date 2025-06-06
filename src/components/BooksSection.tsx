@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import BookCard from './BookCard';
 
@@ -102,7 +101,7 @@ const BooksSection = () => {
 
   const addToCart = (book: Book) => {
     setCart(prev => [...prev, book]);
-    
+
     // Show confetti effect
     const confetti = document.createElement('div');
     confetti.innerHTML = '🎉';
@@ -110,130 +109,100 @@ const BooksSection = () => {
     confetti.style.left = Math.random() * window.innerWidth + 'px';
     confetti.style.top = Math.random() * window.innerHeight + 'px';
     document.body.appendChild(confetti);
-    
+
     setTimeout(() => {
       document.body.removeChild(confetti);
     }, 2000);
   };
 
   return (
-    <section id="books" className="py-20 bg-gradient-to-br from-lavender-50 via-white to-mint-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl sm:text-5xl font-bold font-poppins bg-gradient-to-r from-lavender-600 to-mint-600 bg-clip-text text-transparent mb-4">
-            Discover Amazing Books
-          </h2>
-          <p className="text-xl text-gray-600">Curated collections just for you! ✨</p>
-        </div>
-
-        {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-lavender-100">
-          {/* Genre Filters */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">📚 Browse by Genre</h3>
-            <div className="flex flex-wrap gap-3">
-              {genres.map((genre) => (
-                <button
-                  key={genre.name}
-                  onClick={() => setSelectedGenre(genre.name)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-full font-medium transition-all duration-200 hover:scale-105 ${
-                    selectedGenre === genre.name
-                      ? 'bg-gradient-to-r from-lavender-500 to-mint-500 text-white shadow-lg'
-                      : 'bg-lavender-100 text-lavender-700 hover:bg-lavender-200'
-                  }`}
-                >
-                  <span>{genre.emoji}</span>
-                  <span>{genre.name}</span>
-                </button>
-              ))}
-            </div>
+    <section id="products" className="w-full my-12">
+      <div className="bg-white w-full flex flex-col p-0">
+        <div className="px-8">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 text-left">Explore Products</h2>
+          {/* Filters (genre chips, price slider) */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {genres.map((g) => (
+              <button
+                key={g.name}
+                className={`px-3 py-2 rounded-full text-sm font-medium border transition ${selectedGenre === g.name ? 'bg-lime-300 border-lime-400 text-black' : 'bg-gray-100 border-gray-200 text-gray-700 hover:bg-lime-100'}`}
+                onClick={() => setSelectedGenre(g.name)}
+              >
+                <span className="mr-1">{g.emoji}</span>{g.name}
+              </button>
+            ))}
           </div>
-
-          {/* Price Range */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">💰 Price Range</h3>
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-600">₹{priceRange[0]}</span>
-              <input
-                type="range"
-                min="100"
-                max="2000"
-                value={priceRange[1]}
-                onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                className="flex-1 h-2 bg-lavender-200 rounded-lg appearance-none cursor-pointer"
-              />
-              <span className="text-gray-600">₹{priceRange[1]}</span>
-            </div>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-xs text-gray-500">Price:</span>
+            <input
+              type="range"
+              min={100}
+              max={2000}
+              value={priceRange[0]}
+              onChange={e => setPriceRange([Number(e.target.value), priceRange[1]])}
+              className="accent-lime-400"
+            />
+            <span className="text-xs text-gray-700">₹{priceRange[0]}</span>
+            <span className="mx-1 text-xs text-gray-400">-</span>
+            <input
+              type="range"
+              min={100}
+              max={2000}
+              value={priceRange[1]}
+              onChange={e => setPriceRange([priceRange[0], Number(e.target.value)])}
+              className="accent-lime-400"
+            />
+            <span className="text-xs text-gray-700">₹{priceRange[1]}</span>
           </div>
-
-          {/* Format Filters */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">📖 Format</h3>
-            <div className="flex flex-wrap gap-3">
-              {['All', 'Hardcover 📕', 'eBook 📱'].map((format) => (
-                <button
-                  key={format}
-                  onClick={() => setSelectedFormat(format)}
-                  className={`px-4 py-2 rounded-full font-medium transition-all duration-200 hover:scale-105 ${
-                    selectedFormat === format
-                      ? 'bg-gradient-to-r from-peach-400 to-sunshine-400 text-white shadow-lg'
-                      : 'bg-peach-100 text-peach-700 hover:bg-peach-200'
-                  }`}
-                >
-                  {format}
-                </button>
-              ))}
-            </div>
+          {/* Accent Bar: Popular Genres */}
+          <div className="mb-6 flex items-center gap-2">
+            <span className="text-sm font-semibold text-gray-700">Popular Genres</span>
+            <span className="w-5 h-5 rounded-full bg-blue-400 inline-block"></span>
+            <span className="w-5 h-5 rounded-full bg-red-400 inline-block"></span>
+            <span className="w-5 h-5 rounded-full bg-green-400 inline-block"></span>
+            <span className="w-5 h-5 rounded-full bg-yellow-400 inline-block"></span>
+            <span className="w-5 h-5 rounded-full bg-cyan-300 inline-block"></span>
           </div>
-        </div>
-
-        {/* Books Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {filteredBooks.map((book, index) => (
-            <div
-              key={book.id}
-              className="animate-fade-in"
-              style={{ animationDelay: `${index * 0.1}s` }}
+          {/* Sort By Dropdown */}
+          <div className="flex justify-end mb-4">
+            <label htmlFor="sort" className="mr-2 text-sm text-gray-600 font-medium">Sort By:</label>
+            <select
+              id="sort"
+              className="border border-gray-200 rounded-full px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lime-300"
+            // onChange handler to be implemented for sorting logic
             >
-              <BookCard book={book} onAddToCart={addToCart} />
+              <option value="default">Default</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="rating-desc">Rating: High to Low</option>
+              <option value="newest">Newest</option>
+            </select>
+          </div>
+        </div>
+        {/* Product Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-8 pb-8">
+          {filteredBooks.map((book) => (
+            <div key={book.id} className="bg-white rounded-2xl shadow p-4 flex flex-col items-center">
+              <img src="/placeholder.svg" alt={book.title} className="w-32 h-40 object-cover rounded-xl mb-3 shadow" />
+              <div className="font-bold text-lg text-gray-800 mb-1 text-center">{book.title}</div>
+              <div className="text-xs text-gray-500 mb-1">by {book.author}</div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-lime-200 text-lime-800 rounded-full px-2 py-1 text-xs font-semibold">{book.rating}★</span>
+                <span className="text-xs text-gray-400">({book.reviews} reviews)</span>
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-lg font-bold text-lime-600">₹{book.price}</span>
+                {book.originalPrice && <span className="text-xs text-gray-400 line-through">₹{book.originalPrice}</span>}
+              </div>
+              <button
+                onClick={() => addToCart(book)}
+                className="bg-lime-300 hover:bg-lime-400 text-black font-semibold px-4 py-2 rounded-full transition mt-auto"
+              >
+                Add to Cart
+              </button>
             </div>
           ))}
         </div>
-
-        {/* Empty State */}
-        {filteredBooks.length === 0 && (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">📚</div>
-            <h3 className="text-2xl font-bold text-gray-700 mb-2">No books here! That's sus 🤨</h3>
-            <p className="text-gray-600">Try adjusting your filters to find more books.</p>
-            <button
-              onClick={() => {
-                setSelectedGenre('All');
-                setPriceRange([100, 2000]);
-                setSelectedFormat('All');
-              }}
-              className="mt-4 px-6 py-3 bg-gradient-to-r from-lavender-500 to-mint-500 text-white rounded-full font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105"
-            >
-              Reset Filters ✨
-            </button>
-          </div>
-        )}
-
-        {/* Cart Summary */}
-        {cart.length > 0 && (
-          <div className="fixed bottom-6 right-6 bg-white rounded-2xl shadow-2xl p-4 border border-lavender-200 animate-bounce-gentle">
-            <div className="flex items-center space-x-3">
-              <div className="text-2xl">🛒</div>
-              <div>
-                <div className="font-semibold text-gray-800">{cart.length} items in cart</div>
-                <div className="text-sm text-gray-600">
-                  Total: ₹{cart.reduce((sum, book) => sum + book.price, 0)}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );
