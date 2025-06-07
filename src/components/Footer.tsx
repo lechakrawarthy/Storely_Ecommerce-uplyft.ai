@@ -130,8 +130,8 @@ const Footer = () => {
                         <div className="flex items-center gap-1">
                             <span>© {currentYear}</span>
                             <div className="flex items-center gap-1">
-                                <div className="text-lg font-black text-gray-900">N</div>
-                                <span className="font-medium text-gray-900">nitec.</span>
+                                <div className="text-lg font-black text-gray-900">S</div>
+                                <span className="font-medium text-gray-900">torely.</span>
                             </div>
                             <span>All rights reserved.</span>
                         </div>

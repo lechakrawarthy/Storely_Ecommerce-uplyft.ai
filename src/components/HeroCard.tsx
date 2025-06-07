@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, Twitter, Instagram, Youtube, Linkedin, Heart } from "lucide-react";
+import { ArrowRight, Twitter, Instagram, Youtube, Linkedin, Heart, Package, Truck, Shield } from "lucide-react";
 
 const HeroCard = () => {
     const handleViewAll = () => {
@@ -16,17 +16,17 @@ const HeroCard = () => {
                     {/* Left Content */}
                     <div className="flex-1 z-10">
                         <div className="flex items-center gap-2 mb-4">
-                            <span className="text-sm text-gray-500">🎵 Music is Classic</span>
+                            <span className="text-sm text-gray-500">🛍️ Shop with Confidence</span>
                         </div>
                         <h1 className="text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                            Sequoia Inspiring<br />
-                            Musico.
+                            Storely<br />
+                            Experience.
                         </h1>
                         <div className="flex items-center gap-4 mb-6">
                             <span className="text-4xl font-light text-gray-300">01</span>
                             <div className="flex-1">
-                                <div className="text-lg font-semibold text-gray-800 mb-1">Clear Sounds</div>
-                                <div className="text-sm text-gray-500">Making your dream music come true<br />stay with Sequios Sounds!</div>
+                                <div className="text-lg font-semibold text-gray-800 mb-1">Premium Quality</div>
+                                <div className="text-sm text-gray-500">Discover amazing products from top brands<br />with guaranteed quality and fast delivery!</div>
                             </div>
                         </div>
                         <button
@@ -41,7 +41,8 @@ const HeroCard = () => {
 
                         {/* Social Icons */}
                         <div className="flex items-center gap-4 mt-8">
-                            <span className="text-sm text-gray-500">Follow us on:</span>                            <Twitter className="w-5 h-5 text-gray-400 hover:text-pastel-400 cursor-pointer" />
+                            <span className="text-sm text-gray-500">Follow us on:</span>
+                            <Twitter className="w-5 h-5 text-gray-400 hover:text-pastel-400 cursor-pointer" />
                             <Instagram className="w-5 h-5 text-gray-400 hover:text-pink-400 cursor-pointer" />
                             <Youtube className="w-5 h-5 text-gray-400 hover:text-red-400 cursor-pointer" />
                             <Linkedin className="w-5 h-5 text-gray-400 hover:text-sage-600 cursor-pointer" />
@@ -51,97 +52,107 @@ const HeroCard = () => {
                     {/* Right Product Image */}
                     <div className="flex-1 flex items-center justify-center relative">
                         <img
-                            src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=500&q=80"
-                            alt="Blue Headphones"
+                            src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&w=500&q=80"
+                            alt="Shopping Experience"
                             className="w-80 h-80 object-contain z-10"
                         />
                         {/* Floating dots */}
-                        <div className="absolute top-20 left-10 w-2 h-2 bg-gray-300 rounded-full"></div>                        <div className="absolute top-32 right-16 w-3 h-3 bg-pastel-400 rounded-full"></div>
+                        <div className="absolute top-20 left-10 w-2 h-2 bg-gray-300 rounded-full"></div>
+                        <div className="absolute top-32 right-16 w-3 h-3 bg-pastel-400 rounded-full"></div>
                         <div className="absolute bottom-32 left-20 w-2 h-2 bg-gray-400 rounded-full"></div>
                         <div className="absolute bottom-20 right-10 w-2 h-2 bg-sage-600 rounded-full"></div>
                     </div>
-                </div>                {/* Popular Colors Card */}
-                <div className="col-span-4 row-span-2 glass-strong rounded-2xl p-6 shadow-md">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Popular Colors</h3>
-                    <div className="flex gap-3">
-                        <div className="w-6 h-6 bg-pastel-500 rounded-full"></div>
-                        <div className="w-6 h-6 bg-orange-400 rounded-full"></div>
-                        <div className="w-6 h-6 bg-green-500 rounded-full"></div>
-                        <div className="w-6 h-6 bg-red-500 rounded-full"></div>
-                        <div className="w-6 h-6 bg-cyan-400 rounded-full"></div>
-                    </div>
                 </div>
 
-                {/* New Gen X-Bud Card */}
-                <div className="col-span-4 row-span-2 glass-strong rounded-2xl p-4 flex flex-col shadow-md">
-                    <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-base font-semibold text-gray-800">New Gen<br />X-Bud</h4>
-                        <ArrowRight className="w-5 h-5 text-gray-400" />
+                {/* Store Features Card */}
+                <div className="col-span-4 row-span-2 glass-strong rounded-2xl p-6 shadow-md">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Why Choose Us</h3>
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                            <Truck className="w-4 h-4 text-green-500" />
+                            <span className="text-sm text-gray-600">Fast Delivery</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Shield className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm text-gray-600">Secure Shopping</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Package className="w-4 h-4 text-purple-500" />
+                            <span className="text-sm text-gray-600">Quality Products</span>
+                        </div>
                     </div>
+                </div>                {/* New Gen X-Bud Card */}
+                <div className="col-span-4 row-span-2 glass-strong rounded-2xl p-4 flex flex-col shadow-md hover:shadow-lg transition-all cursor-pointer group" onClick={handleViewAll}>
+                    <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-base font-semibold text-gray-800">Premium<br />Electronics</h4>
+                        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                    </div>
+                    <div className="text-xs text-gray-500 mb-2">Latest Technology</div>
                     <img
                         src="https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?auto=format&fit=crop&w=300&q=80"
-                        alt="Earbuds"
-                        className="w-full h-20 object-contain mt-2"
+                        alt="Electronics"
+                        className="w-full h-20 object-contain mt-2 group-hover:scale-105 transition-transform"
                     />
                 </div>
 
-                {/* Light Grey Surface Headphone Card */}
-                <div className="col-span-4 row-span-2 glass-strong rounded-2xl p-4 flex flex-col shadow-md">
+                {/* Fashion & Textiles Card */}
+                <div className="col-span-4 row-span-2 glass-strong rounded-2xl p-4 flex flex-col shadow-md hover:shadow-lg transition-all cursor-pointer group" onClick={handleViewAll}>
                     <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-base font-semibold text-gray-800">Light Grey Surface<br />Headphone</h4>
-                        <ArrowRight className="w-5 h-5 text-gray-400" />
+                        <h4 className="text-base font-semibold text-gray-800">Fashion &<br />Textiles</h4>
+                        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
                     </div>
-                    <div className="text-xs text-gray-500 mb-2">Boosted with bass</div>
+                    <div className="text-xs text-gray-500 mb-2">Trendy & Comfortable</div>
                     <img
-                        src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=300&q=80"
-                        alt="VR Headset"
-                        className="w-full h-16 object-contain"
+                        src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=300&q=80"
+                        alt="Fashion"
+                        className="w-full h-16 object-contain group-hover:scale-105 transition-transform"
                     />
                 </div>
 
-                {/* Bottom Row Cards */}
-                {/* More Products Card */}
+                {/* Bottom Row Cards */}                {/* More Products Card */}
                 <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col shadow-sm">
                     <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-sm font-semibold text-gray-800">More Products</h4>
+                        <h4 className="text-sm font-semibold text-gray-800">Best Sellers</h4>
                         <Heart className="w-4 h-4 text-red-500 fill-current" />
                     </div>
-                    <div className="text-xs text-gray-500 mb-3">460 plus items</div>
+                    <div className="text-xs text-gray-500 mb-3">500+ products</div>
                     <div className="flex gap-2">
-                        <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
-                        <div className="w-8 h-8 bg-gray-300 rounded-lg"></div>
-                        <div className="w-8 h-8 bg-gray-400 rounded-lg"></div>
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                            <Package className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
+                            <Shield className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center">
+                            <Truck className="w-4 h-4 text-white" />
+                        </div>
                     </div>
-                </div>
-
-                {/* Reviews Card */}
-                <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col items-center justify-center shadow-sm">                    <div className="flex -space-x-2 mb-2">
-                    <div className="w-8 h-8 bg-sage-500 rounded-full"></div>
-                    <div className="w-8 h-8 bg-green-500 rounded-full"></div>
-                    <div className="w-8 h-8 bg-purple-500 rounded-full"></div>
-                </div>
-                    <div className="text-2xl font-bold text-white bg-pastel-500 rounded-full w-12 h-12 flex items-center justify-center mb-1">5m+</div>
-                    <div className="text-xs text-gray-500">46 reviews</div>
-                </div>
-
-                {/* Popular Badge Card */}
+                </div>                {/* Customer Reviews Card */}
+                <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col items-center justify-center shadow-sm">
+                    <div className="flex -space-x-2 mb-2">
+                        <div className="w-8 h-8 bg-sage-500 rounded-full"></div>
+                        <div className="w-8 h-8 bg-green-500 rounded-full"></div>
+                        <div className="w-8 h-8 bg-purple-500 rounded-full"></div>
+                    </div>
+                    <div className="text-2xl font-bold text-white bg-pastel-500 rounded-full w-12 h-12 flex items-center justify-center mb-1">4.8</div>
+                    <div className="text-xs text-gray-500">2.4k reviews</div>
+                </div>                {/* Trending Badge Card */}
                 <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col shadow-sm">
-                    <div className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full w-fit mb-2">🔥 Popular</div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-2">Listening Has Been Released</h4>
+                    <div className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full w-fit mb-2">🔥 Trending</div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-2">New Books Collection</h4>
                     <div className="flex gap-2">
-                        <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-                        <div className="w-6 h-6 bg-gray-400 rounded-full"></div>
+                        <div className="w-6 h-6 bg-yellow-400 rounded-full"></div>
+                        <div className="w-6 h-6 bg-orange-400 rounded-full"></div>
                     </div>
-                </div>
-
-                {/* AR/VR Card */}
+                </div>                {/* Smart Devices Card */}
                 <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col shadow-sm">
                     <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-sm font-semibold text-gray-800">Smart Devices</h4>
                         <ArrowRight className="w-4 h-4 text-gray-400" />
                     </div>
                     <img
-                        src="https://images.unsplash.com/photo-1592478411213-6153e4ebc696?auto=format&fit=crop&w=200&q=80"
-                        alt="AR Device"
+                        src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=200&q=80"
+                        alt="Smart Watch"
                         className="w-full h-12 object-contain mb-2"
                     />
                     <div className="bg-yellow-400 text-black text-xs px-2 py-1 rounded w-fit">4.7</div>
