@@ -703,3 +703,18 @@
     transform: translate3d(0, -2px, 0);
   }
 }
+
+/* Loading Spinner Animation */
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-reverse {
+  animation: spin-reverse 1s linear infinite;
+}

@@ -4,6 +4,7 @@ import { ArrowLeft, Star, Heart, ShoppingCart, Truck, Shield, RefreshCw, Plus, M
 import { useCart } from '../contexts/CartContext';
 import MinimizedNavigation from '../components/MinimizedNavigation';
 import Footer from '../components/Footer';
+import OptimizedImage from '../components/OptimizedImage';
 
 // Import products data (you might want to move this to a separate file)
 const allProducts = [
@@ -277,9 +278,8 @@ const ProductDetail: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                     {/* Image Section */}
                     <div className="space-y-6">
-                        {/* Main Image */}
-                        <div className="relative aspect-square glass-card rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
-                            <img
+                        {/* Main Image */}                        <div className="relative aspect-square glass-card rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
+                            <OptimizedImage
                                 src={images[selectedImage]}
                                 alt={product.title}
                                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
@@ -334,9 +334,8 @@ const ProductDetail: React.FC = () => {
                                     className={`aspect-square w-20 h-20 rounded-xl overflow-hidden border-3 transition-all duration-300 hover:scale-110 ${selectedImage === index
                                         ? 'border-sage-400 shadow-lg scale-110'
                                         : 'border-white/40 hover:border-sage-300'
-                                        }`}
-                                >
-                                    <img src={img} alt="" className="w-full h-full object-cover" />
+                                        }`}                                >
+                                    <OptimizedImage src={img} alt="" className="w-full h-full object-cover" />
                                 </button>
                             ))}
                         </div>

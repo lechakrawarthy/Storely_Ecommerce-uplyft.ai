@@ -232,23 +232,25 @@ const Checkout = () => {
                             const isCurrent = currentStep === step.number;
 
                             return (
-                                <React.Fragment key={step.number}>
-                                    <div className="flex flex-col items-center">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-colors ${isActive
+                                <React.Fragment key={step.number}>                                    <div className="flex flex-col items-center">
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-colors ${isActive
                                             ? 'bg-sage-600 border-sage-600 text-white'
                                             : 'border-gray-300 text-gray-400'
-                                            }`}>
-                                            <Icon className="w-5 h-5" />
-                                        </div>
-                                        <span className={`text-sm mt-2 font-medium ${isCurrent ? 'text-sage-600' : isActive ? 'text-gray-800' : 'text-gray-400'
-                                            }`}>
-                                            {step.title}
-                                        </span>
+                                        }`}>
+                                        <Icon className="w-5 h-5" />
                                     </div>
-                                    {index < steps.length - 1 && (
-                                        <div className={`flex-1 h-0.5 mx-4 ${currentStep > step.number ? 'bg-sage-600' : 'bg-gray-200'
-                                            }`} />
-                                    )}
+                                    <span className={`text-sm mt-2 font-medium ${isCurrent
+                                            ? 'text-sage-600'
+                                            : isActive
+                                                ? 'text-gray-800'
+                                                : 'text-gray-400'
+                                        }`}>
+                                        {step.title}
+                                    </span>
+                                </div>                                    {index < steps.length - 1 && (
+                                    <div className={`flex-1 h-0.5 mx-4 ${currentStep > step.number ? 'bg-sage-600' : 'bg-gray-200'
+                                        }`} />
+                                )}
                                 </React.Fragment>
                             );
                         })}
