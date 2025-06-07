@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Star, ShoppingCart, Filter, Grid, List, Search, SlidersHorizontal, Zap, Award } from 'lucide-react';
+import { Heart, Star, ShoppingCart, Filter, Grid, List, Search, SlidersHorizontal, Zap, Award, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 
@@ -272,7 +272,6 @@ const ProductGrid = ({ chatbotFilter }: { chatbotFilter?: (product: Product) => 
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
-
   return (
     <section id="products" className="w-full py-16 bg-gradient-to-br from-slate-100 to-slate-200">
       <div className="max-w-7xl mx-auto px-4">
@@ -286,20 +285,33 @@ const ProductGrid = ({ chatbotFilter }: { chatbotFilter?: (product: Product) => 
           </p>
         </div>
 
+        {/* Category Sections for Scroll Targeting */}
+        <div id="electronics" className="scroll-mt-20"></div>
+        <div id="books" className="scroll-mt-20"></div>
+        <div id="textiles" className="scroll-mt-20"></div>
+        <div id="fashion" className="scroll-mt-20"></div>
+
         {/* Filter Container */}
         <div className="glass-card rounded-2xl p-6 mb-8">
           {/* Search & Controls */}
-          <div className="flex flex-col lg:flex-row gap-4 mb-6">
-            {/* Search */}
+          <div className="flex flex-col lg:flex-row gap-4 mb-6">            {/* Search */}
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder='Try "smartphones under ₹1000"'
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 glass-subtle rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 placeholder-gray-500"
+                className="w-full pl-12 pr-12 py-3 glass-subtle rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 placeholder-gray-500"
               />
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
             </div>
 
             {/* View Mode */}

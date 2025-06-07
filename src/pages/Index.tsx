@@ -4,7 +4,6 @@ import HeroCard from '../components/HeroCard';
 import ProductGrid from '../components/BooksSection';
 import CategorySection from '../components/CategorySection';
 import FAQ from '../components/FAQ';
-import ChatbotSection from '../components/ChatbotSection';
 import Footer from '../components/Footer';
 
 const Index = () => {
@@ -21,10 +20,8 @@ const Index = () => {
         <HeroCard />
         <CategorySection />
         <ProductGrid />
-        <FAQ />
-      </main>
+        <FAQ />      </main>
       <Footer />
-      <ChatbotSection />
     </div>
   );
 };
