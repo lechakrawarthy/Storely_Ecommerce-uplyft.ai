@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, Twitter, Instagram, Youtube, Linkedin, Heart, Package, Truck, Shield } from "lucide-react";
+import { ArrowRight, Twitter, Instagram, Youtube, Linkedin, Heart, Package, Truck, Shield, Star, Gift, Sparkles, TrendingUp } from "lucide-react";
 
 const HeroCard = () => {
     const handleViewAll = () => {
@@ -12,7 +12,7 @@ const HeroCard = () => {
             {/* Main Bento Grid */}
             <div className="grid grid-cols-12 grid-rows-8 gap-4 h-[600px]">
                 {/* Main Hero Card - Large Left Section */}
-                <div className="col-span-8 row-span-6 glass-card rounded-3xl p-8 flex items-center justify-between relative overflow-hidden shadow-lg">
+                <div className="col-span-8 row-span-8 glass-card rounded-3xl p-8 flex items-center justify-between relative overflow-hidden shadow-lg">
                     {/* Left Content */}
                     <div className="flex-1 z-10">
                         <div className="flex items-center gap-2 mb-4">
@@ -42,75 +42,91 @@ const HeroCard = () => {
                         {/* Social Icons */}
                         <div className="flex items-center gap-4 mt-8">
                             <span className="text-sm text-gray-500">Follow us on:</span>
-                            <Twitter className="w-5 h-5 text-gray-400 hover:text-pastel-400 cursor-pointer" />
-                            <Instagram className="w-5 h-5 text-gray-400 hover:text-pink-400 cursor-pointer" />
-                            <Youtube className="w-5 h-5 text-gray-400 hover:text-red-400 cursor-pointer" />
-                            <Linkedin className="w-5 h-5 text-gray-400 hover:text-sage-600 cursor-pointer" />
+                            <Twitter className="w-5 h-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors" />
+                            <Instagram className="w-5 h-5 text-gray-400 hover:text-pink-400 cursor-pointer transition-colors" />
+                            <Youtube className="w-5 h-5 text-gray-400 hover:text-red-400 cursor-pointer transition-colors" />
+                            <Linkedin className="w-5 h-5 text-gray-400 hover:text-blue-600 cursor-pointer transition-colors" />
                         </div>
-                    </div>
-
-                    {/* Right Product Image */}
+                    </div>                    {/* Right Product Image */}
                     <div className="flex-1 flex items-center justify-center relative">
-                        <img
-                            src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&w=500&q=80"
-                            alt="Shopping Experience"
-                            className="w-80 h-80 object-contain z-10"
-                        />
+                        <div className="w-80 h-80 rounded-3xl overflow-hidden shadow-lg bg-gradient-to-br from-gray-50 to-gray-100">
+                            <img
+                                src="https://cdn2.hubspot.net/hubfs/53/ecommerce%20marketing.jpg"
+                                alt="Shopping Cart and Products"
+                                className="w-full h-full object-cover z-10"
+                            />
+                        </div>
                         {/* Floating dots */}
-                        <div className="absolute top-20 left-10 w-2 h-2 bg-gray-300 rounded-full"></div>
-                        <div className="absolute top-32 right-16 w-3 h-3 bg-pastel-400 rounded-full"></div>
-                        <div className="absolute bottom-32 left-20 w-2 h-2 bg-gray-400 rounded-full"></div>
-                        <div className="absolute bottom-20 right-10 w-2 h-2 bg-sage-600 rounded-full"></div>
+                        <div className="absolute top-20 left-10 w-2 h-2 bg-gray-300 rounded-full animate-pulse"></div>
+                        <div className="absolute top-32 right-16 w-3 h-3 bg-blue-400 rounded-full animate-pulse delay-75"></div>
+                        <div className="absolute bottom-32 left-20 w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-150"></div>
+                        <div className="absolute bottom-20 right-10 w-2 h-2 bg-green-600 rounded-full animate-pulse delay-200"></div>
                     </div>
                 </div>
 
-                {/* Store Features Card */}
-                <div className="col-span-4 row-span-2 glass-strong rounded-2xl p-6 shadow-md">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Why Choose Us</h3>
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <Truck className="w-4 h-4 text-green-500" />
-                            <span className="text-sm text-gray-600">Fast Delivery</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Shield className="w-4 h-4 text-blue-500" />
-                            <span className="text-sm text-gray-600">Secure Shopping</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Package className="w-4 h-4 text-purple-500" />
-                            <span className="text-sm text-gray-600">Quality Products</span>
+                {/* Right Side Cards (Stacked) */}
+                <div className="col-span-4 row-span-8 flex flex-col gap-4">
+                    {/* Why Choose Us Card */}
+                    <div className="glass-strong rounded-2xl p-6 shadow-md flex-1 flex flex-col justify-center">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Why Choose Us</h3>
+                        <div className="flex flex-col gap-3">
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <Truck className="w-4 h-4 text-green-600" />
+                                </div>
+                                <span className="text-sm font-medium text-gray-700">Fast Delivery</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <Shield className="w-4 h-4 text-blue-600" />
+                                </div>
+                                <span className="text-sm font-medium text-gray-700">Secure Shopping</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <Package className="w-4 h-4 text-purple-600" />
+                                </div>
+                                <span className="text-sm font-medium text-gray-700">Quality Products</span>
+                            </div>
                         </div>
                     </div>
-                </div>                {/* New Gen X-Bud Card */}
-                <div className="col-span-4 row-span-2 glass-strong rounded-2xl p-4 flex flex-col shadow-md hover:shadow-lg transition-all cursor-pointer group" onClick={handleViewAll}>
-                    <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-base font-semibold text-gray-800">Premium<br />Electronics</h4>
-                        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+
+                    {/* Premium Electronics Card */}
+                    <div className="glass-strong rounded-2xl p-4 shadow-md hover:shadow-lg transition-all cursor-pointer group flex-1 flex flex-col" onClick={handleViewAll}>
+                        <div className="flex items-center justify-between mb-3">
+                            <h4 className="text-base font-semibold text-gray-800">Premium<br />Electronics</h4>
+                            <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                        </div>
+                        <div className="text-xs text-gray-500 mb-3">Latest Technology</div>
+                        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4">
+                            <img
+                                src="https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?auto=format&fit=crop&w=400&q=80"
+                                alt="Electronics"
+                                className="w-full h-16 object-cover rounded-lg group-hover:scale-105 transition-transform"
+                            />
+                        </div>
                     </div>
-                    <div className="text-xs text-gray-500 mb-2">Latest Technology</div>
-                    <img
-                        src="https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?auto=format&fit=crop&w=300&q=80"
-                        alt="Electronics"
-                        className="w-full h-20 object-contain mt-2 group-hover:scale-105 transition-transform"
-                    />
+
+                    {/* Fashion & Textiles Card */}
+                    <div className="glass-strong rounded-2xl p-4 shadow-md hover:shadow-lg transition-all cursor-pointer group flex-1 flex flex-col" onClick={handleViewAll}>
+                        <div className="flex items-center justify-between mb-3">
+                            <h4 className="text-base font-semibold text-gray-800">Fashion &<br />Textiles</h4>
+                            <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                        </div>
+                        <div className="text-xs text-gray-500 mb-3">Trendy & Comfortable</div>
+                        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4">
+                            <img
+                                src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=400&q=80"
+                                alt="Fashion"
+                                className="w-full h-16 object-cover rounded-lg group-hover:scale-105 transition-transform"
+                            />
+                        </div>
+                    </div>
                 </div>
 
-                {/* Fashion & Textiles Card */}
-                <div className="col-span-4 row-span-2 glass-strong rounded-2xl p-4 flex flex-col shadow-md hover:shadow-lg transition-all cursor-pointer group" onClick={handleViewAll}>
-                    <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-base font-semibold text-gray-800">Fashion &<br />Textiles</h4>
-                        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-                    </div>
-                    <div className="text-xs text-gray-500 mb-2">Trendy & Comfortable</div>
-                    <img
-                        src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=300&q=80"
-                        alt="Fashion"
-                        className="w-full h-16 object-contain group-hover:scale-105 transition-transform"
-                    />
-                </div>
-
-                {/* Bottom Row Cards */}                {/* More Products Card */}
-                <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col shadow-sm">
+                {/* Bottom Row Cards */}
+                {/* Best Sellers Card */}
+                <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={handleViewAll}>
                     <div className="flex items-center justify-between mb-2">
                         <h4 className="text-sm font-semibold text-gray-800">Best Sellers</h4>
                         <Heart className="w-4 h-4 text-red-500 fill-current" />
@@ -127,35 +143,49 @@ const HeroCard = () => {
                             <Truck className="w-4 h-4 text-white" />
                         </div>
                     </div>
-                </div>                {/* Customer Reviews Card */}
-                <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col items-center justify-center shadow-sm">
+                </div>
+
+                {/* Customer Reviews Card */}
+                <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col justify-between items-center shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={handleViewAll}>
+                    <div className="flex items-center justify-between w-full mb-1">
+                        <h4 className="text-sm font-semibold text-gray-800">Reviews</h4>
+                        <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                    </div>
                     <div className="flex -space-x-2 mb-2">
-                        <div className="w-8 h-8 bg-sage-500 rounded-full"></div>
-                        <div className="w-8 h-8 bg-green-500 rounded-full"></div>
-                        <div className="w-8 h-8 bg-purple-500 rounded-full"></div>
+                        <div className="w-6 h-6 bg-blue-500 rounded-full border-2 border-white"></div>
+                        <div className="w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+                        <div className="w-6 h-6 bg-purple-500 rounded-full border-2 border-white"></div>
                     </div>
-                    <div className="text-2xl font-bold text-white bg-pastel-500 rounded-full w-12 h-12 flex items-center justify-center mb-1">4.8</div>
+                    <div className="text-2xl font-bold text-white bg-yellow-500 rounded-full w-10 h-10 flex items-center justify-center mb-1">4.8</div>
                     <div className="text-xs text-gray-500">2.4k reviews</div>
-                </div>                {/* Trending Badge Card */}
-                <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col shadow-sm">
-                    <div className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full w-fit mb-2">🔥 Trending</div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-2">New Books Collection</h4>
-                    <div className="flex gap-2">
-                        <div className="w-6 h-6 bg-yellow-400 rounded-full"></div>
-                        <div className="w-6 h-6 bg-orange-400 rounded-full"></div>
-                    </div>
-                </div>                {/* Smart Devices Card */}
-                <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col shadow-sm">
+                </div>
+
+                {/* New Arrivals Card */}
+                <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={handleViewAll}>
                     <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-sm font-semibold text-gray-800">Smart Devices</h4>
-                        <ArrowRight className="w-4 h-4 text-gray-400" />
+                        <h4 className="text-sm font-semibold text-gray-800">New Arrivals</h4>
+                        <Sparkles className="w-4 h-4 text-purple-500" />
                     </div>
-                    <img
-                        src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=200&q=80"
-                        alt="Smart Watch"
-                        className="w-full h-12 object-contain mb-2"
-                    />
-                    <div className="bg-yellow-400 text-black text-xs px-2 py-1 rounded w-fit">4.7</div>
+                    <div className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full w-fit mb-2">✨ Fresh</div>
+                    <div className="text-xs text-gray-500 mb-2">Latest Collection</div>
+                    <div className="flex gap-2">
+                        <div className="w-6 h-6 bg-purple-400 rounded-full"></div>
+                        <div className="w-6 h-6 bg-pink-400 rounded-full"></div>
+                        <div className="w-6 h-6 bg-indigo-400 rounded-full"></div>
+                    </div>
+                </div>
+
+                {/* Special Offers Card */}
+                <div className="col-span-2 row-span-2 glass-subtle rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={handleViewAll}>
+                    <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-sm font-semibold text-gray-800">Special Offers</h4>
+                        <Gift className="w-4 h-4 text-orange-500" />
+                    </div>
+                    <div className="bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded-full w-fit mb-2">🎁 Sale</div>
+                    <div className="text-xs text-gray-500 mb-2">Up to 50% off</div>
+                    <div className="bg-gradient-to-r from-orange-400 to-red-400 text-white text-xs font-bold px-2 py-1 rounded w-fit">
+                        Limited Time
+                    </div>
                 </div>
             </div>
         </div>
