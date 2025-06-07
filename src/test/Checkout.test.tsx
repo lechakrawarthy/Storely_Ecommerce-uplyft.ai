@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -69,7 +69,7 @@ vi.mock('react-router-dom', async () => {
     return {
         ...actual,
         useNavigate: () => mockNavigate,
-        Link: ({ children, to, ...props }: any) => <a href={to} {...props}>{children}</a>,
+        Link: ({ children, to, ...props }: { children: React.ReactNode; to: string; [key: string]: unknown }) => <a href={to} {...props}>{children}</a>,
     }
 })
 
@@ -183,7 +183,9 @@ describe('Checkout', () => {
         // Check for price in order summary section specifically
         const orderSummary = screen.getByText('Order Summary').closest('div')
         expect(orderSummary).toBeInTheDocument()
-    })  it('validates shipping information', async () => {
+    })
+
+    it('validates shipping information', async () => {
         const user = userEvent.setup()
 
         render(
@@ -361,11 +363,13 @@ describe('Checkout', () => {
             const previousButton = screen.getByText('Previous')
             user.click(previousButton)
         })
-
+        
         await waitFor(() => {
             expect(screen.getByText('Shipping Information')).toBeInTheDocument()
         })
-    })  it('calculates total correctly including taxes and shipping', () => {
+    })
+
+    it('calculates total correctly including taxes and shipping', () => {
         render(
             <TestWrapper>
                 <Checkout />
