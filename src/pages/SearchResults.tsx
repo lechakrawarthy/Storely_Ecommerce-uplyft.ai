@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Filter, Grid, List, SlidersHorizontal, Search, X, Heart } from 'lucide-react';
+import { Filter, Grid, List, SlidersHorizontal, Search, X, Heart, Star, ShoppingCart } from 'lucide-react';
 import { useSearch } from '../contexts/SearchContext';
 import type { SortOption } from '../contexts/SearchContext';
 import { useCart } from '../contexts/CartContext';
@@ -8,203 +8,87 @@ import { useToast } from '../components/ui/use-toast';
 import MinimizedNavigation from '../components/MinimizedNavigation';
 import Footer from '../components/Footer';
 import OptimizedImage from '../components/OptimizedImage';
-import type { Product } from '../components/BooksSection';
+import SearchPerformanceMetrics from '../components/SearchPerformanceMetrics';
+import { allProducts, getCategories, sortProducts } from '../data/products';
+import type { Product } from '../data/products';
 
-// Import all products from BooksSection (we'll extract this to a separate file later)
-const allProducts: Product[] = [
-    // Electronics
-    {
-        id: 'e1',
-        title: 'New Gen X-Bud',
-        price: 1299,
-        originalPrice: 1599,
-        image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-        category: 'Electronics',
-        color: 'Black',
-        rating: 4.7,
-        reviews: 320,
-        inStock: true,
-        description: 'Premium wireless earbuds with noise cancellation',
-    },
-    {
-        id: 'e2',
-        title: 'Light Grey Headphone',
-        price: 1999,
-        originalPrice: 2499,
-        image: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
-        category: 'Electronics',
-        color: 'Grey',
-        rating: 4.8,
-        reviews: 210,
-        inStock: true,
-        description: 'Professional over-ear headphones with studio quality',
-    },
-    {
-        id: 'e3',
-        title: 'Smart Watch Pro',
-        price: 2999,
-        originalPrice: 3499,
-        image: 'https://images.unsplash.com/photo-1579586337278-3f436f25d4d3?auto=format&fit=crop&w=400&q=80',
-        category: 'Electronics',
-        color: 'Black',
-        rating: 4.6,
-        reviews: 450,
-        inStock: true,
-        description: 'Advanced fitness tracking and smart notifications',
-    },
-    // Books
-    {
-        id: 'b1',
-        title: 'JavaScript Mastery',
-        price: 899,
-        originalPrice: 1199,
-        image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=400&q=80',
-        category: 'Books',
-        color: 'Paperback',
-        rating: 4.8,
-        reviews: 892,
-        inStock: true,
-        description: 'Complete guide to mastering JavaScript programming',
-    },
-    {
-        id: 'b2',
-        title: 'React Advanced Concepts',
-        price: 1299,
-        originalPrice: 1599,
-        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-        category: 'Books',
-        color: 'Hardcover',
-        rating: 4.9,
-        reviews: 445,
-        inStock: true,
-        description: 'Deep dive into React.js advanced patterns and techniques',
-    },
-    // Fashion
-    {
-        id: 'f1',
-        title: 'Premium Sneakers',
-        price: 2499,
-        originalPrice: 2999,
-        image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=400&q=80',
-        category: 'Fashion',
-        color: 'White',
-        rating: 4.5,
-        reviews: 156,
-        inStock: true,
-        description: 'Comfortable premium sneakers for everyday wear',
-    },
-    {
-        id: 'f2',
-        title: 'Designer Jacket',
-        price: 3999,
-        originalPrice: 4999,
-        image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=400&q=80',
-        category: 'Fashion',
-        color: 'Black',
-        rating: 4.7,
-        reviews: 89,
-        inStock: true,
-        description: 'Premium designer jacket with modern fit',
-    },
-    // Textiles
-    {
-        id: 't1',
-        title: 'Cotton T-Shirt',
-        price: 599,
-        originalPrice: 799,
-        image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=400&q=80',
-        category: 'Textiles',
-        color: 'White',
-        rating: 4.3,
-        reviews: 78,
-        inStock: true,
-        description: '100% organic cotton premium quality t-shirt',
-    },
-    {
-        id: 't2',
-        title: 'Silk Scarf',
-        price: 899,
-        originalPrice: 1199,
-        image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=400&q=80',
-        category: 'Textiles',
-        color: 'Blue',
-        rating: 4.6,
-        reviews: 124,
-        inStock: true,
-        description: 'Luxurious silk scarf with elegant patterns',
-    },
-];
+// Utility function to highlight search terms
+const highlightSearchTerms = (text: string, searchQuery: string) => {
+    if (!searchQuery.trim()) return text;
+
+    const terms = searchQuery.toLowerCase().split(' ').filter(term => term.length > 0);
+    let highlightedText = text;
+
+    terms.forEach(term => {
+        const regex = new RegExp(`(${term})`, 'gi');
+        highlightedText = highlightedText.replace(regex, '<mark class="bg-yellow-200 px-1 rounded">$1</mark>');
+    });
+
+    return highlightedText;
+};
+
+// Component to render highlighted text
+const HighlightedText = ({ text, searchQuery }: { text: string; searchQuery: string }) => {
+    const highlightedText = highlightSearchTerms(text, searchQuery);
+    return <span dangerouslySetInnerHTML={{ __html: highlightedText }} />;
+};
 
 const SearchResults = () => {
-    const [searchParams] = useSearchParams(); const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const { addItem } = useCart();
-    const { toast } = useToast();
-    const {
+    const { toast } = useToast(); const {
         searchQuery,
         setSearchQuery,
         searchResults,
-        setSearchResults,
         isSearching,
-        setIsSearching,
         filters,
         setFilters,
         sortBy,
-        setSortBy
-    } = useSearch();
-
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+        setSortBy,
+        performSearch,
+        applyFilters,
+        getAvailableColors,
+        getAvailableBadges,
+    } = useSearch(); const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [showFilters, setShowFilters] = useState(false);
+    const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [selectedRating, setSelectedRating] = useState(0);
+    const [inStockOnly, setInStockOnly] = useState(false);
+    const [selectedColor, setSelectedColor] = useState('all');
+    const [hasDiscountOnly, setHasDiscountOnly] = useState(false);
+    const [selectedBadge, setSelectedBadge] = useState('all');
 
-    // Get query from URL parameters
-    const query = searchParams.get('q') || ''; useEffect(() => {
-        if (query) {
-            setSearchQuery(query);
+    const categories = getCategories();
+    const query = searchParams.get('q') || '';
+
+    useEffect(() => {
+        if (query && query !== searchQuery) {
             performSearch(query);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [query, setSearchQuery]);
-
-    const performSearch = async (searchTerm: string) => {
-        setIsSearching(true);
-
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 300));
-
-        const results = allProducts.filter(product => {
-            const matchesQuery = searchTerm === '' ||
-                product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                product.category.toLowerCase().includes(searchTerm.toLowerCase());
-
-            const matchesCategory = filters.category === 'all' || product.category === filters.category;
-            const matchesPrice = product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1];
-            const matchesRating = product.rating >= filters.rating;
-            const matchesStock = !filters.inStock || product.inStock;
-
-            return matchesQuery && matchesCategory && matchesPrice && matchesRating && matchesStock;
+    }, [query, performSearch, searchQuery]);    // Handle filter changes
+    const handleFilterChange = () => {
+        setFilters({
+            category: selectedCategory,
+            priceRange: priceRange,
+            rating: selectedRating,
+            inStock: inStockOnly,
+            color: selectedColor,
+            hasDiscount: hasDiscountOnly,
+            badge: selectedBadge,
         });
-
-        // Apply sorting
-        switch (sortBy) {
-            case 'price-low':
-                results.sort((a, b) => a.price - b.price);
-                break;
-            case 'price-high':
-                results.sort((a, b) => b.price - a.price);
-                break;
-            case 'rating':
-                results.sort((a, b) => b.rating - a.rating);
-                break;
-            case 'newest':
-                // For demo purposes, reverse order
-                results.reverse();
-                break;
-        }
-
-        setSearchResults(results);
-        setIsSearching(false);
+        applyFilters();
     };
-    const handleAddToCart = (product: Product) => {
+
+    // Handle sort change
+    const handleSortChange = (newSortBy: SortOption) => {
+        setSortBy(newSortBy);
+        applyFilters();
+    };
+
+    const handleAddToCart = (product: Product, e: React.MouseEvent) => {
+        e.stopPropagation();
         addItem(product);
         toast({
             title: "Added to cart!",
@@ -219,52 +103,60 @@ const SearchResults = () => {
 
     const ProductCard = ({ product }: { product: Product }) => (
         <div className="glass-card rounded-2xl overflow-hidden hover:glass-strong transition-all duration-300 cursor-pointer group"
-            onClick={() => handleProductClick(product.id)}>      <div className="relative overflow-hidden">
+            onClick={() => handleProductClick(product.id)}>
+            <div className="relative overflow-hidden">
                 <OptimizedImage
                     src={product.image}
                     alt={product.title}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-3 right-3">
-                    <button className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors">
+                    <button
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors"
+                    >
                         <Heart className="w-4 h-4 text-gray-600" />
                     </button>
                 </div>
-                {product.originalPrice && (
+                {product.originalPrice && product.discount && (
                     <div className="absolute top-3 left-3 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                        {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+                        {product.discount}% OFF
+                    </div>
+                )}
+                {product.badge && (
+                    <div className="absolute bottom-3 left-3 bg-lime-400 text-gray-900 text-xs px-2 py-1 rounded-full font-semibold">
+                        {product.badge}
                     </div>
                 )}
             </div>
-
             <div className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-gray-500 font-medium">{product.category}</span>
-                    <div className="flex items-center gap-1">
-                        <span className="text-yellow-400">★</span>
-                        <span className="text-xs text-gray-600">{product.rating}</span>
+                <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="ml-1 text-sm text-gray-600">{product.rating}</span>
                     </div>
+                    <span className="text-gray-400">•</span>
+                    <span className="text-sm text-gray-600">{product.reviews} reviews</span>
                 </div>
-
-                <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2">{product.title}</h3>
-                <p className="text-xs text-gray-600 mb-3 line-clamp-2">{product.description}</p>
-
+                <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                    <HighlightedText text={product.title} searchQuery={searchQuery} />
+                </h3>
+                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    <HighlightedText text={product.description || ''} searchQuery={searchQuery} />
+                </p>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold text-gray-900">₹{product.price}</span>
+                        <span className="text-lg font-bold text-gray-900">₹{product.price.toLocaleString()}</span>
                         {product.originalPrice && (
-                            <span className="text-sm text-gray-400 line-through">₹{product.originalPrice}</span>
+                            <span className="text-sm text-gray-500 line-through">₹{product.originalPrice.toLocaleString()}</span>
                         )}
                     </div>
-
                     <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleAddToCart(product);
-                        }}
-                        className="bg-black text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                        onClick={(e) => handleAddToCart(product, e)}
+                        className="bg-lime-400 hover:bg-lime-500 text-gray-900 px-3 py-1.5 rounded-lg font-medium transition-colors flex items-center gap-1"
                     >
-                        Add to Cart
+                        <ShoppingCart className="w-4 h-4" />
+                        Add
                     </button>
                 </div>
             </div>
@@ -277,17 +169,6 @@ const SearchResults = () => {
 
             <main className="pt-28 pb-12">
                 <div className="max-w-7xl mx-auto px-4">
-                    {/* Search Header */}
-                    <div className="mb-8">
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                            Search Results
-                            {query && <span className="text-gray-600"> for "{query}"</span>}
-                        </h1>
-                        <p className="text-gray-600">
-                            {isSearching ? 'Searching...' : `${searchResults.length} products found`}
-                        </p>
-                    </div>
-
                     <div className="flex gap-8">
                         {/* Filters Sidebar */}
                         <div className={`w-80 ${showFilters ? 'block' : 'hidden'} lg:block`}>
@@ -306,42 +187,53 @@ const SearchResults = () => {
                                 <div className="mb-6">
                                     <h4 className="font-medium text-gray-800 mb-3">Category</h4>
                                     <select
-                                        value={filters.category}
-                                        onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+                                        value={selectedCategory}
+                                        onChange={(e) => {
+                                            setSelectedCategory(e.target.value);
+                                            setFilters({ ...filters, category: e.target.value });
+                                            handleFilterChange();
+                                        }}
                                         className="w-full p-2 border border-gray-200 rounded-lg text-sm"
                                     >
-                                        <option value="all">All Categories</option>
-                                        <option value="Electronics">Electronics</option>
-                                        <option value="Books">Books</option>
-                                        <option value="Fashion">Fashion</option>
-                                        <option value="Textiles">Textiles</option>
+                                        {categories.map(category => (
+                                            <option key={category} value={category.toLowerCase()}>
+                                                {category}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
 
                                 {/* Price Range */}
                                 <div className="mb-6">
-                                    <h4 className="font-medium text-gray-800 mb-3">Price Range</h4>
-                                    <div className="flex gap-2 items-center">
+                                    <h4 className="font-medium text-gray-800 mb-3">
+                                        Price Range (₹{priceRange[0].toLocaleString()} - ₹{priceRange[1].toLocaleString()})
+                                    </h4>
+                                    <div className="space-y-3">
                                         <input
-                                            type="number"
-                                            placeholder="Min"
-                                            value={filters.priceRange[0]}
-                                            onChange={(e) => setFilters({
-                                                ...filters,
-                                                priceRange: [Number(e.target.value), filters.priceRange[1]]
-                                            })}
-                                            className="w-full p-2 border border-gray-200 rounded-lg text-sm"
+                                            type="range"
+                                            min="0"
+                                            max="5000"
+                                            value={priceRange[0]}
+                                            onChange={(e) => {
+                                                const newRange: [number, number] = [Number(e.target.value), priceRange[1]];
+                                                setPriceRange(newRange);
+                                                setFilters({ ...filters, priceRange: newRange });
+                                                handleFilterChange();
+                                            }}
+                                            className="w-full"
                                         />
-                                        <span className="text-gray-500">-</span>
                                         <input
-                                            type="number"
-                                            placeholder="Max"
-                                            value={filters.priceRange[1]}
-                                            onChange={(e) => setFilters({
-                                                ...filters,
-                                                priceRange: [filters.priceRange[0], Number(e.target.value)]
-                                            })}
-                                            className="w-full p-2 border border-gray-200 rounded-lg text-sm"
+                                            type="range"
+                                            min="0"
+                                            max="5000"
+                                            value={priceRange[1]}
+                                            onChange={(e) => {
+                                                const newRange: [number, number] = [priceRange[0], Number(e.target.value)];
+                                                setPriceRange(newRange);
+                                                setFilters({ ...filters, priceRange: newRange });
+                                                handleFilterChange();
+                                            }}
+                                            className="w-full"
                                         />
                                     </div>
                                 </div>
@@ -349,35 +241,141 @@ const SearchResults = () => {
                                 {/* Rating Filter */}
                                 <div className="mb-6">
                                     <h4 className="font-medium text-gray-800 mb-3">Minimum Rating</h4>
-                                    <select
-                                        value={filters.rating}
-                                        onChange={(e) => setFilters({ ...filters, rating: Number(e.target.value) })}
-                                        className="w-full p-2 border border-gray-200 rounded-lg text-sm"
-                                    >
-                                        <option value={0}>Any Rating</option>
-                                        <option value={4}>4+ Stars</option>
-                                        <option value={4.5}>4.5+ Stars</option>
-                                    </select>
-                                </div>
-
-                                {/* In Stock Filter */}
+                                    <div className="space-y-2">
+                                        {[0, 3, 4, 4.5].map(rating => (
+                                            <label key={rating} className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="radio"
+                                                    name="rating"
+                                                    value={rating}
+                                                    checked={selectedRating === rating}
+                                                    onChange={(e) => {
+                                                        const newRating = Number(e.target.value);
+                                                        setSelectedRating(newRating);
+                                                        setFilters({ ...filters, rating: newRating });
+                                                        handleFilterChange();
+                                                    }}
+                                                    className="text-yellow-400"
+                                                />
+                                                <div className="flex items-center gap-1">
+                                                    {rating === 0 ? (
+                                                        <span className="text-sm text-gray-600">Any Rating</span>
+                                                    ) : (
+                                                        <>
+                                                            <div className="flex">
+                                                                {[...Array(5)].map((_, i) => (
+                                                                    <Star
+                                                                        key={i}
+                                                                        className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                                                                            }`}
+                                                                    />
+                                                                ))}
+                                                            </div>
+                                                            <span className="text-sm text-gray-600">& up</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>                                {/* In Stock Filter */}
                                 <div className="mb-6">
-                                    <label className="flex items-center gap-2">
+                                    <label className="flex items-center gap-2 cursor-pointer">
                                         <input
                                             type="checkbox"
-                                            checked={filters.inStock}
-                                            onChange={(e) => setFilters({ ...filters, inStock: e.target.checked })}
-                                            className="rounded"
+                                            checked={inStockOnly}
+                                            onChange={(e) => {
+                                                setInStockOnly(e.target.checked);
+                                                setFilters({ ...filters, inStock: e.target.checked });
+                                                handleFilterChange();
+                                            }}
+                                            className="rounded border-gray-300"
                                         />
                                         <span className="text-sm text-gray-700">In Stock Only</span>
                                     </label>
                                 </div>
 
+                                {/* Color Filter */}
+                                <div className="mb-6">
+                                    <h4 className="font-medium text-gray-800 mb-3">Color</h4>
+                                    <select
+                                        value={selectedColor}
+                                        onChange={(e) => {
+                                            setSelectedColor(e.target.value);
+                                            setFilters({ ...filters, color: e.target.value });
+                                            handleFilterChange();
+                                        }}
+                                        className="w-full p-2 border border-gray-200 rounded-lg text-sm"
+                                    >
+                                        <option value="all">All Colors</option>
+                                        {getAvailableColors().map(color => (
+                                            <option key={color} value={color}>
+                                                {color}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Badge Filter */}
+                                <div className="mb-6">
+                                    <h4 className="font-medium text-gray-800 mb-3">Badge</h4>
+                                    <select
+                                        value={selectedBadge}
+                                        onChange={(e) => {
+                                            setSelectedBadge(e.target.value);
+                                            setFilters({ ...filters, badge: e.target.value });
+                                            handleFilterChange();
+                                        }}
+                                        className="w-full p-2 border border-gray-200 rounded-lg text-sm"
+                                    >
+                                        <option value="all">All Badges</option>
+                                        {getAvailableBadges().map(badge => (
+                                            <option key={badge} value={badge}>
+                                                {badge}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Discount Filter */}
+                                <div className="mb-6">
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={hasDiscountOnly}
+                                            onChange={(e) => {
+                                                setHasDiscountOnly(e.target.checked);
+                                                setFilters({ ...filters, hasDiscount: e.target.checked });
+                                                handleFilterChange();
+                                            }}
+                                            className="rounded border-gray-300"
+                                        />
+                                        <span className="text-sm text-gray-700">On Sale Only</span>
+                                    </label>
+                                </div>                                {/* Clear Filters */}
                                 <button
-                                    onClick={() => performSearch(query)}
-                                    className="w-full bg-black text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                                    onClick={() => {
+                                        setSelectedCategory('all');
+                                        setPriceRange([0, 5000]);
+                                        setSelectedRating(0);
+                                        setInStockOnly(false);
+                                        setSelectedColor('all');
+                                        setHasDiscountOnly(false);
+                                        setSelectedBadge('all');
+                                        setFilters({
+                                            category: 'all',
+                                            priceRange: [0, 5000],
+                                            rating: 0,
+                                            inStock: false,
+                                            color: 'all',
+                                            hasDiscount: false,
+                                            badge: 'all',
+                                        });
+                                        handleFilterChange();
+                                    }}
+                                    className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors"
                                 >
-                                    Apply Filters
+                                    Clear All Filters
                                 </button>
                             </div>
                         </div>
@@ -396,14 +394,14 @@ const SearchResults = () => {
                                     </button>
                                     <select
                                         value={sortBy}
-                                        onChange={(e) => setSortBy(e.target.value as SortOption)}
+                                        onChange={(e) => handleSortChange(e.target.value as SortOption)}
                                         className="px-4 py-2 glass-card rounded-lg text-sm"
                                     >
                                         <option value="relevance">Sort by Relevance</option>
-                                        <option value="price-low">Price: Low to High</option>
-                                        <option value="price-high">Price: High to Low</option>
-                                        <option value="rating">Highest Rated</option>
-                                        <option value="newest">Newest First</option>
+                                        <option value="Price: Low to High">Price: Low to High</option>
+                                        <option value="Price: High to Low">Price: High to Low</option>
+                                        <option value="Rating">Highest Rated</option>
+                                        <option value="Newest">Newest First</option>
                                     </select>
                                 </div>
 
@@ -421,7 +419,18 @@ const SearchResults = () => {
                                         <List className="w-4 h-4" />
                                     </button>
                                 </div>
+                            </div>                            {/* Search Results Summary */}
+                            <div className="mb-6">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                                    {searchQuery ? `Search results for "${searchQuery}"` : 'All Products'}
+                                </h2>
+                                <p className="text-gray-600">
+                                    {isSearching ? 'Searching...' : `${searchResults.length} products found`}
+                                </p>
                             </div>
+
+                            {/* Search Performance Metrics */}
+                            {searchQuery && <SearchPerformanceMetrics />}
 
                             {/* Results Grid */}
                             {isSearching ? (
@@ -452,7 +461,6 @@ const SearchResults = () => {
                                     <button
                                         onClick={() => {
                                             setSearchQuery('');
-                                            setSearchResults([]);
                                             navigate('/');
                                         }}
                                         className="bg-black text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors"
