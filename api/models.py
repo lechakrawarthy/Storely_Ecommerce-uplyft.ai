@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from datetime import datetime
 import os
+import json
 
 # Create SQLite database
 db_path = os.path.join(os.path.dirname(__file__), 'bookbuddy.db')
@@ -51,16 +52,32 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
+    preferences_json = Column(Text)  # JSON string of user preferences
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    last_login = Column(DateTime)
+    is_active = Column(Boolean, default=True)
     
-    chats = relationship("ChatSession", back_populates="user")
+    # Relationships
+    sessions = relationship("ChatSession", back_populates="user")
     
     def to_dict(self):
+        preferences = {}
+        if self.preferences_json:
+            try:
+                preferences = json.loads(self.preferences_json)
+            except:
+                preferences = {}
+        
         return {
             "id": self.id,
             "username": self.username,
             "email": self.email,
-            "created_at": self.created_at.isoformat()
+            "preferences": preferences,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+            "last_login": self.last_login.isoformat() if self.last_login else None,
+            "is_active": self.is_active
         }
 
 class ChatSession(Base):
@@ -71,7 +88,7 @@ class ChatSession(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    user = relationship("User", back_populates="chats")
+    user = relationship("User", back_populates="sessions")
     messages = relationship("ChatMessage", back_populates="session")
     
     def to_dict(self):

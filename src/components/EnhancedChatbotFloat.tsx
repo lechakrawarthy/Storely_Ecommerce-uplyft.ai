@@ -70,11 +70,52 @@ const ProductChatCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) =
 const TypingIndicator = () => (
   <div className="flex space-x-1 p-3">
     <div className="flex space-x-1">
-      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+      <div className="w-2 h-2 bg-pastel-400 rounded-full animate-bounce"></div>
+      <div className="w-2 h-2 bg-sage-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+      <div className="w-2 h-2 bg-gold-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
     </div>
-    <span className="text-xs text-gray-500 ml-2">BookBuddy AI is thinking...</span>
+    <span className="text-xs text-gray-600 ml-2 font-medium">mimi is analyzing...</span>
+  </div>
+);
+
+const QuickActions = ({ onActionClick }: { onActionClick: (action: string) => void }) => (
+  <div className="p-3 border-b border-gray-100">
+    <p className="text-xs text-gray-500 mb-2 font-medium">Quick Actions:</p>
+    <div className="flex flex-wrap gap-2">
+      {[
+        { text: '🔍 Search Books', action: 'search books' },
+        { text: '⭐ Best Sellers', action: 'show bestsellers' },
+        { text: '💰 Budget Books', action: 'books under 500' },
+        { text: '📚 Categories', action: 'show categories' }
+      ].map((item, idx) => (
+        <button
+          key={idx}
+          onClick={() => onActionClick(item.action)}
+          className="text-xs px-3 py-1.5 bg-gradient-to-r from-pastel-100 to-sage-100 hover:from-pastel-200 hover:to-sage-200 rounded-full text-gray-700 transition-all duration-200 border border-pastel-200/50"
+        >
+          {item.text}
+        </button>
+      ))}
+    </div>
+  </div>
+);
+
+const SessionHistory = ({ sessions, onLoadSession }: { sessions: ChatSession[], onLoadSession: (id: string) => void }) => (
+  <div className="max-h-32 overflow-y-auto">
+    <p className="text-xs text-gray-500 mb-2 px-3 font-medium">Recent Sessions:</p>
+    {sessions.length === 0 ? (
+      <p className="text-xs text-gray-400 px-3 pb-2">No previous sessions</p>
+    ) : (
+      sessions.slice(0, 3).map((session) => (
+        <button
+          key={session.id}
+          onClick={() => onLoadSession(session.id)}
+          className="w-full text-left px-3 py-2 hover:bg-gray-50 transition-colors"
+        >
+          <p className="text-xs text-gray-600 truncate">Session {session.timestamp}</p>
+        </button>
+      ))
+    )}
   </div>
 );
 
@@ -85,10 +126,18 @@ const ChatbotFloat: React.FC = () => {
   const [sessionId, setSessionId] = useState<string>('');
   const [isTyping, setIsTyping] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [previousSessions, setPreviousSessions] = useState<ChatSession[]>([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userPreferences, setUserPreferences] = useState({
+    preferredCategories: [] as string[],
+    budgetRange: { min: 0, max: 2000 },
+    lastSearches: [] as string[]
+  });
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "Hi! I'm BookBuddy Assistant 📚 Your personal book concierge! I can help you find books, check prices, and recommend great reads based on your interests.",
+      text: "Welcome to BookBuddy Assistant! 📚 I'm your intelligent shopping companion designed to help you discover amazing books, electronics, and textiles. I can search our inventory, provide personalized recommendations, and guide you through your purchase journey.",
       sender: 'bot',
       timestamp: new Date(),
       type: 'text'
@@ -98,7 +147,7 @@ const ChatbotFloat: React.FC = () => {
       sender: 'bot',
       timestamp: new Date(),
       type: 'suggestions',
-      suggestions: ['Find fiction books', 'Book recommendations', 'Browse categories', 'Books under ₹500']
+      suggestions: ['🔍 Search our 100+ book collection', '⭐ Show bestsellers', '💝 Personalized recommendations', '📱 Browse electronics', '👕 Explore textiles']
     }
   ]);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -115,10 +164,16 @@ const ChatbotFloat: React.FC = () => {
     
     try {
       const response = await axios.get(`${API_URL}/api/sessions/${id}`);
-      
-      if (response.data && response.data.history?.length > 0) {
+        if (response.data && response.data.history?.length > 0) {
         // Convert API format to our message format
-        const loadedMessages = response.data.history.map((msg: any) => ({
+        const loadedMessages = response.data.history.map((msg: {
+          id?: number;
+          message: string;
+          sender: 'user' | 'bot';
+          timestamp: string;
+          products?: Product[];
+          suggestions?: string[];
+        }) => ({
           id: msg.id || Date.now() + Math.random(),
           text: msg.message,
           sender: msg.sender,
@@ -194,14 +249,22 @@ const ChatbotFloat: React.FC = () => {
     setMessages(prev => [...prev, newMessage]);
     handleApiRequest(suggestion);
   };
-
   const handleApiRequest = async (userMessage: string) => {
     setIsTyping(true);
+
+    // Store user's search for learning preferences
+    setUserPreferences(prev => ({
+      ...prev,
+      lastSearches: [userMessage, ...prev.lastSearches.slice(0, 4)]
+    }));
 
     try {
       const response = await axios.post(`${API_URL}/api/chat`, {
         message: userMessage,
-        session_id: sessionId
+        session_id: sessionId,
+        user_id: user?.id,
+        preferences: userPreferences,
+        timestamp: new Date().toISOString()
       });
 
       setIsTyping(false);
@@ -221,15 +284,26 @@ const ChatbotFloat: React.FC = () => {
         
         setMessages(prev => [...prev, newMessage]);
         setConnectionError(false);
+
+        // Update user preferences based on bot recommendations
+        if (botResponse.learned_preferences) {
+          setUserPreferences(prev => ({
+            ...prev,
+            ...botResponse.learned_preferences
+          }));
+        }
       }
     } catch (error) {
       console.error('Error communicating with chatbot API:', error);
       setIsTyping(false);
       setConnectionError(true);
       
+      // Provide more helpful offline fallback
+      const fallbackMessage = generateOfflineResponse(userMessage);
+      
       const errorMessage: Message = {
         id: Date.now(),
-        text: "Sorry, I'm having trouble connecting to my brain. Please try again later.",
+        text: fallbackMessage,
         sender: 'bot',
         timestamp: new Date(),
         type: 'text'
@@ -239,10 +313,67 @@ const ChatbotFloat: React.FC = () => {
       
       toast({
         variant: "destructive",
-        title: "Connection error",
-        description: "Could not connect to chatbot service",
+        title: "Working offline",
+        description: "Providing basic assistance while reconnecting...",
       });
     }
+  };
+
+  // Enhanced offline fallback with basic NLP
+  const generateOfflineResponse = (userInput: string): string => {
+    const input = userInput.toLowerCase();
+    
+    if (input.includes('book') || input.includes('read')) {
+      return "📚 I'd love to help you find books! Try browsing our categories: Fiction, Non-fiction, Educational, or search for specific titles when I'm back online.";
+    }
+    if (input.includes('price') || input.includes('cost') || input.includes('budget')) {
+      return "💰 For budget-friendly options, check our 'Under ₹500' section or filter by price range in the main catalog.";
+    }
+    if (input.includes('recommend') || input.includes('suggest')) {
+      return "⭐ I'd recommend checking our bestsellers section for popular choices, or browse by your favorite genres!";
+    }
+    if (input.includes('electronic') || input.includes('gadget')) {
+      return "📱 Our electronics section has great deals on headphones, smartwatches, and tech accessories!";
+    }
+    
+    return "I'm temporarily offline but will be back soon! Meanwhile, you can browse our catalog or try the search filters to find what you're looking for.";
+  };
+
+  const loadPreviousSession = async (sessionIdToLoad: string) => {
+    try {
+      await loadSession(sessionIdToLoad);
+      setSessionId(sessionIdToLoad);
+      setShowHistory(false);
+    } catch (error) {
+      console.error('Error loading session:', error);
+      toast({
+        variant: "destructive",
+        title: "Could not load session",
+        description: "Please try again later",
+      });
+    }
+  };
+  const resetChat = () => {
+    setMessages([
+      {
+        id: 1,
+        text: "Chat reset! How can I help you find the perfect products today? 🛍️",
+        sender: 'bot',
+        timestamp: new Date(),
+        type: 'text'
+      },
+      {
+        id: 2,
+        sender: 'bot',
+        timestamp: new Date(),
+        type: 'suggestions',
+        suggestions: ['🔍 Search products', '⭐ Show bestsellers', '💝 Get recommendations', '📱 Browse electronics']
+      }
+    ]);
+    
+    // Create new session
+    const newSessionId = user?.id ? `${user.id}_${Date.now()}` : `anon_${Math.random().toString(36).substring(2, 11)}`;
+    setSessionId(newSessionId);
   };
 
   const sendMessage = () => {
@@ -273,18 +404,6 @@ const ChatbotFloat: React.FC = () => {
     };
 
     setMessages(prev => [...prev, confirmMessage]);
-  };
-
-  const resetChat = () => {
-    setMessages([
-      {
-        id: Date.now(),
-        text: "Hi! I'm BookBuddy Assistant 📚 Your personal book concierge! How can I help you today?",
-        sender: 'bot',
-        timestamp: new Date(),
-        type: 'text'
-      }
-    ]);
   };
 
   return (
