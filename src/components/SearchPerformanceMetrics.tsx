@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Clock, Search, TrendingUp, Users } from 'lucide-react';
+import { Clock, Search, TrendingUp, Users } from '../utils/icons';
 
 interface SearchMetrics {
     totalSearches: number;

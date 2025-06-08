@@ -1,15 +1,24 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import Navigation from '../components/Navigation';
 import HeroCard from '../components/HeroCard';
-import ProductGrid from '../components/BooksSection';
-import CategorySection from '../components/CategorySection';
-import MobileRecentlyViewed from '../components/MobileRecentlyViewed';
-import FAQ from '../components/FAQ';
-import Footer from '../components/Footer';
 import { useIsMobile } from '../hooks/use-mobile';
+import { SkeletonLoader } from '../components/LayoutStabilizer';
+import { initPerformanceOptimizations } from '../utils/performance';
+
+// Lazy load below-the-fold components
+const ProductGrid = lazy(() => import('../components/BooksSection'));
+const CategorySection = lazy(() => import('../components/CategorySection'));
+const MobileRecentlyViewed = lazy(() => import('../components/MobileRecentlyViewed'));
+const FAQ = lazy(() => import('../components/FAQ'));
+const Footer = lazy(() => import('../components/Footer'));
 
 const Index = () => {
   const isMobile = useIsMobile();
+
+  // Initialize performance optimizations
+  React.useEffect(() => {
+    initPerformanceOptimizations();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative flex flex-col overflow-x-hidden">
@@ -21,18 +30,33 @@ const Index = () => {
 
       <Navigation />
       <main className="relative z-10 flex-1 max-w-7xl mx-auto w-full px-4 flex flex-col gap-10 pt-28 pb-24">
+        {/* Above the fold - load immediately */}
         <HeroCard />
-        <CategorySection />
+
+        {/* Below the fold - lazy load */}
+        <Suspense fallback={<SkeletonLoader height="400px" />}>
+          <CategorySection />
+        </Suspense>
 
         {/* Mobile Recently Viewed - Show only on mobile */}
         {isMobile && (
-          <MobileRecentlyViewed className="lg:hidden" />
+          <Suspense fallback={<SkeletonLoader height="200px" className="lg:hidden" />}>
+            <MobileRecentlyViewed className="lg:hidden" />
+          </Suspense>
         )}
 
-        <ProductGrid />
-        <FAQ />
+        <Suspense fallback={<SkeletonLoader height="600px" />}>
+          <ProductGrid />
+        </Suspense>
+
+        <Suspense fallback={<SkeletonLoader height="300px" />}>
+          <FAQ />
+        </Suspense>
       </main>
-      <Footer />
+
+      <Suspense fallback={<SkeletonLoader height="200px" />}>
+        <Footer />
+      </Suspense>
     </div>
   );
 };

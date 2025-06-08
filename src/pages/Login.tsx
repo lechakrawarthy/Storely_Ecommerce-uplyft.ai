@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
-import { Mail, Phone, AlertCircle, Loader2 } from 'lucide-react';
+import { Mail, Phone, AlertCircle, Loader2 } from '../utils/icons';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 

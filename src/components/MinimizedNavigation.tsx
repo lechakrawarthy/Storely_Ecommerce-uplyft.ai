@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Search, Heart, ShoppingBag, User, Home, Clock, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Search, Heart, ShoppingBag, User, Home, Clock, TrendingUp } from '../utils/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';

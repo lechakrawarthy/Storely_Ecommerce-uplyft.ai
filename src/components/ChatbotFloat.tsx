@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Minimize2, Maximize2, ShoppingCart, Bot, Sparkles, Zap, Package, Search, ArrowRight, Loader, RefreshCw } from 'lucide-react';
+import { MessageCircle, X, Send, Minimize2, Maximize2, ShoppingCart, Bot, Sparkles, Zap, Package, Search, ArrowRight, Loader, RefreshCw } from '../utils/icons';
 import { useCart } from '../contexts/CartContext';
 import type { Product } from './BooksSection';
 import { useAuth } from '../contexts/AuthContext';
@@ -128,7 +128,7 @@ const TypingIndicator = () => (
       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
     </div>
-    <span className="text-xs text-gray-500 ml-2">BookBuddy AI is thinking...</span>
+    <span className="text-xs text-gray-500 ml-2">Mimi is thinking...</span>
   </div>
 );
 
@@ -142,7 +142,7 @@ const ChatbotFloat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "Hi! I'm BookBuddy Assistant 📚 Your personal book concierge! I can help you find books, check prices, and recommend great reads based on your interests.",
+      text: "Hi! I'm Mimi your Assistant 📚 Your personal concierge! I can help you find books,electronics,textiles check prices, and recommend great deals based on your interests.",
       sender: 'bot',
       timestamp: new Date(),
       type: 'text'
@@ -188,10 +188,10 @@ const ChatbotFloat: React.FC = () => {
   const loadSession = async (id: string) => {
     setIsConnecting(true);
     setConnectionError(false);
-    
+
     try {
       const response = await axios.get(`${API_URL}/api/sessions/${id}`);
-      
+
       if (response.data && response.data.history?.length > 0) {
         // Convert API format to our message format
         const loadedMessages = response.data.history.map((msg: any) => ({
@@ -203,7 +203,7 @@ const ChatbotFloat: React.FC = () => {
           products: msg.products,
           suggestions: msg.suggestions
         }));
-        
+
         setMessages(loadedMessages);
         toast({
           title: "Session loaded",
@@ -261,7 +261,7 @@ const ChatbotFloat: React.FC = () => {
 
       if (response.data && response.data.response) {
         const botResponse = response.data.response;
-        
+
         const newMessage: Message = {
           id: Date.now(),
           text: botResponse.message,
@@ -271,7 +271,7 @@ const ChatbotFloat: React.FC = () => {
           products: botResponse.products,
           suggestions: botResponse.suggestions
         };
-        
+
         setMessages(prev => [...prev, newMessage]);
         setConnectionError(false);
       }
@@ -279,7 +279,7 @@ const ChatbotFloat: React.FC = () => {
       console.error('Error communicating with chatbot API:', error);
       setIsTyping(false);
       setConnectionError(true);
-      
+
       const errorMessage: Message = {
         id: Date.now(),
         text: "Sorry, I'm having trouble connecting to my brain. Please try again later.",
@@ -287,9 +287,9 @@ const ChatbotFloat: React.FC = () => {
         timestamp: new Date(),
         type: 'text'
       };
-      
+
       setMessages(prev => [...prev, errorMessage]);
-      
+
       toast({
         variant: "destructive",
         title: "Connection error",
@@ -365,8 +365,8 @@ const ChatbotFloat: React.FC = () => {
           )}
 
           <div className={`fixed z-50 transition-all duration-300 ${isMobile
-              ? 'inset-4 bg-white rounded-3xl shadow-2xl border border-gray-200'
-              : `bottom-24 right-6 w-96 ${isMinimized ? 'h-16' : 'h-[500px]'} bg-white rounded-2xl shadow-2xl border border-gray-200`
+            ? 'inset-4 bg-white rounded-3xl shadow-2xl border border-gray-200'
+            : `bottom-24 right-6 w-96 ${isMinimized ? 'h-16' : 'h-[500px]'} bg-white rounded-2xl shadow-2xl border border-gray-200`
             }`}>
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-500 to-green-500 p-4 text-white flex items-center justify-between rounded-t-2xl">
@@ -418,8 +418,8 @@ const ChatbotFloat: React.FC = () => {
 
                         {msg.type === 'text' && msg.text && (
                           <div className={`p-3 rounded-2xl ${msg.sender === 'user'
-                              ? 'bg-gradient-to-r from-blue-500 to-green-500 text-white'
-                              : 'bg-white border border-gray-200 text-gray-800'
+                            ? 'bg-gradient-to-r from-blue-500 to-green-500 text-white'
+                            : 'bg-white border border-gray-200 text-gray-800'
                             }`}>
                             <p className="text-sm">{msg.text}</p>
                           </div>

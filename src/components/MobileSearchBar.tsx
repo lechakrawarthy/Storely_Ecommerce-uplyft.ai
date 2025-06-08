@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Clock, TrendingUp, X, Filter, SlidersHorizontal } from 'lucide-react';
+import { Search, Clock, TrendingUp, X, Filter, SlidersHorizontal } from '../utils/icons';
 import { useNavigate } from 'react-router-dom';
 import { useSearch } from '../contexts/SearchContext';
 

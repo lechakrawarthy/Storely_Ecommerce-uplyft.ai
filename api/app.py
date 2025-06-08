@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_compress import Compress
 from dotenv import load_dotenv
 import json
 import nltk
@@ -21,6 +22,17 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config.SECRET_KEY
+
+# Enable compression for all responses
+compress = Compress(app)
+app.config['COMPRESS_MIMETYPES'] = [
+    'text/html', 'text/css', 'text/xml', 'text/javascript', 'text/plain',
+    'application/json', 'application/javascript', 'application/xml+rss',
+    'application/atom+xml', 'image/svg+xml'
+]
+app.config['COMPRESS_LEVEL'] = 6
+app.config['COMPRESS_MIN_SIZE'] = 500
+
 CORS(app, origins=config.CORS_ORIGINS)
 
 # Configure logging
@@ -923,6 +935,18 @@ def health_check():
         'status': 'healthy',
         'timestamp': datetime.now().isoformat(),
         'version': '1.0.0'
+    })
+
+
+@app.route('/api/debug', methods=['GET'])
+def debug_info():
+    """Debug endpoint to check configuration"""
+    return jsonify({
+        'cors_origins': config.CORS_ORIGINS,
+        'api_url': request.url_root,
+        'headers': dict(request.headers),
+        'method': request.method,
+        'timestamp': datetime.utcnow().isoformat()
     })
 
 # Authentication Endpoints

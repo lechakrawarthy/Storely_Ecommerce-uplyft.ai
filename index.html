@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title> Storely - Your Premium Shopping Experience</title>
+    <title>Storely - Your Premium Shopping Experience</title>
     <meta
       name="description"
       content="Discover premium electronics, books, and textiles with Storely - your intelligent shopping assistant"
@@ -19,14 +19,196 @@
       content="Discover premium electronics, books, and textiles with Storely - your intelligent shopping assistant"
     />
     <meta property="og:type" content="website" />
+    <!-- Performance hints -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
 
-    <!-- Google Fonts -->
+    <!-- Critical CSS for above-the-fold content -->
+    <style id="critical-css">
+      /* Critical layout styles */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        line-height: 1.15;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        line-height: 1.5;
+        color: #1f2937;
+        background-color: #ffffff;
+      }
+
+      /* Critical layout utilities */
+      .container {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      @media (min-width: 640px) {
+        .container {
+          max-width: 640px;
+        }
+      }
+
+      @media (min-width: 768px) {
+        .container {
+          max-width: 768px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .container {
+          max-width: 1024px;
+        }
+      }
+
+      /* Critical visibility utilities */
+      .hidden {
+        display: none;
+      }
+
+      .block {
+        display: block;
+      }
+
+      .flex {
+        display: flex;
+      }
+
+      .grid {
+        display: grid;
+      }
+
+      .relative {
+        position: relative;
+      }
+
+      .absolute {
+        position: absolute;
+      }
+
+      .items-center {
+        align-items: center;
+      }
+
+      .justify-center {
+        justify-content: center;
+      }
+
+      .justify-between {
+        justify-content: space-between;
+      }
+
+      /* Critical spacing */
+      .p-4 {
+        padding: 1rem;
+      }
+
+      .m-0 {
+        margin: 0;
+      }
+
+      .w-full {
+        width: 100%;
+      }
+
+      .h-full {
+        height: 100%;
+      }
+
+      .min-h-screen {
+        min-height: 100vh;
+      }
+
+      /* Critical typography */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin: 0;
+        font-weight: 600;
+        line-height: 1.25;
+      }
+
+      h1 {
+        font-size: 2.25rem;
+      }
+
+      h2 {
+        font-size: 1.875rem;
+      }
+
+      /* Critical colors */
+      .text-white {
+        color: #ffffff;
+      }
+
+      .text-gray-900 {
+        color: #111827;
+      }
+
+      .bg-white {
+        background-color: #ffffff;
+      }
+
+      .bg-gray-50 {
+        background-color: #f9fafb;
+      }
+
+      /* Loading skeleton */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          #f0f0f0 25%,
+          #e0e0e0 50%,
+          #f0f0f0 75%
+        );
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+      }
+
+      @keyframes loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+    </style>
+
+    <!-- Preconnect to fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Preload critical fonts -->
     <link
+      rel="preload"
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+
+    <!-- Fallback for no-JS -->
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
+      />
+    </noscript>
   </head>
 
   <body>

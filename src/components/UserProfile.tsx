@@ -1,5 +1,5 @@
 import React from "react";
-import { Heart, ShoppingCart, User } from "lucide-react";
+import { Heart, ShoppingCart, User } from "../utils/icons";
 
 const UserProfile = () => (
     <div className="fixed top-8 right-8 z-50 bg-white/90 rounded-full shadow-lg flex items-center gap-3 px-4 py-2 backdrop-blur border border-gray-100">

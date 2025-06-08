@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Filter, Grid, List, SlidersHorizontal, Search, X, Heart, Star, ShoppingCart } from 'lucide-react';
+import { Filter, Grid, List, SlidersHorizontal, Search, X, Heart, Star, ShoppingCart } from '../utils/icons';
 import { useSearch } from '../contexts/SearchContext';
 import type { SortOption } from '../contexts/SearchContext';
 import { useCart } from '../contexts/CartContext';

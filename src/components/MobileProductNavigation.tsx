@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Grid } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Grid } from '../utils/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSwipe } from '../hooks/use-swipe';
 import { allProducts, type Product } from '../data/products';

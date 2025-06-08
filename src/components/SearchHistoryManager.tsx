@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, X, TrendingUp, BarChart3 } from 'lucide-react';
+import { Clock, X, TrendingUp, BarChart3 } from '../utils/icons';
 import { useSearch } from '../contexts/SearchContext';
 
 interface SearchHistoryManagerProps {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, X, ArrowRight, Eye } from 'lucide-react';
+import { Clock, X, ArrowRight, Eye } from '../utils/icons';
 import { useRecentlyViewed } from '../hooks/use-recently-viewed';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useCart } from '../contexts/CartContext';

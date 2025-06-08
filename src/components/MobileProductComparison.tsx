@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Star, ArrowLeft, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Star, ArrowLeft, ArrowRight, ChevronDown, ChevronUp } from '../utils/icons';
 import { useComparison } from '../hooks/use-comparison';
 import { useSwipe } from '../hooks/use-swipe';
 import { useNavigate } from 'react-router-dom';
@@ -229,8 +229,8 @@ const MobileProductComparison: React.FC<MobileProductComparisonProps> = ({ isOpe
                                                     <Star
                                                         key={i}
                                                         className={`w-4 h-4 ${i < Math.floor(currentProduct.rating)
-                                                                ? 'fill-yellow-400 text-yellow-400'
-                                                                : 'text-gray-300'
+                                                            ? 'fill-yellow-400 text-yellow-400'
+                                                            : 'text-gray-300'
                                                             }`}
                                                     />
                                                 ))}

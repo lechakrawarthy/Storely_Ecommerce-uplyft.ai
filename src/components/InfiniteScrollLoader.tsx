@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2 } from '../utils/icons';
 import { useInfiniteScroll } from '../hooks/use-infinite-scroll';
 import { useIsMobile } from '../hooks/use-mobile';
 import MobileLoadingAnimations from './MobileLoadingAnimations';

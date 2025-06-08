@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Trash2, ShoppingCart, ArrowLeft, Grid, List, Filter } from 'lucide-react';
+import { Heart, Trash2, ShoppingCart, ArrowLeft, Grid, List, Filter } from '../utils/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useCart } from '../contexts/CartContext';
@@ -121,8 +121,8 @@ const WishlistPage = () => {
                                 <button
                                     onClick={() => setViewMode('grid')}
                                     className={`p-2 rounded-md transition-colors ${viewMode === 'grid'
-                                            ? 'bg-gray-100 text-gray-900'
-                                            : 'text-gray-500 hover:text-gray-700'
+                                        ? 'bg-gray-100 text-gray-900'
+                                        : 'text-gray-500 hover:text-gray-700'
                                         }`}
                                 >
                                     <Grid className="w-4 h-4" />
@@ -130,8 +130,8 @@ const WishlistPage = () => {
                                 <button
                                     onClick={() => setViewMode('list')}
                                     className={`p-2 rounded-md transition-colors ${viewMode === 'list'
-                                            ? 'bg-gray-100 text-gray-900'
-                                            : 'text-gray-500 hover:text-gray-700'
+                                        ? 'bg-gray-100 text-gray-900'
+                                        : 'text-gray-500 hover:text-gray-700'
                                         }`}
                                 >
                                     <List className="w-4 h-4" />
@@ -154,8 +154,8 @@ const WishlistPage = () => {
 
                     {/* Products Grid/List */}
                     <div className={`${viewMode === 'grid'
-                            ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
-                            : 'space-y-4'
+                        ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+                        : 'space-y-4'
                         }`}>
                         {wishlistProducts.map(product => (
                             <div
@@ -195,8 +195,8 @@ const WishlistPage = () => {
                                                     <svg
                                                         key={i}
                                                         className={`w-4 h-4 ${i < Math.floor(product.rating)
-                                                                ? 'text-yellow-400 fill-current'
-                                                                : 'text-gray-300'
+                                                            ? 'text-yellow-400 fill-current'
+                                                            : 'text-gray-300'
                                                             }`}
                                                         viewBox="0 0 20 20"
                                                     >

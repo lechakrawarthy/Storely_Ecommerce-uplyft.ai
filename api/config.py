@@ -14,14 +14,15 @@ class Config:
     # API Configuration
     API_TITLE = "Enhanced E-commerce Chatbot API"
     API_VERSION = "1.0.0"
-    API_DESCRIPTION = "Comprehensive e-commerce chatbot with AI-powered recommendations"
-
     # CORS Configuration
+    API_DESCRIPTION = "Comprehensive e-commerce chatbot with AI-powered recommendations"
     CORS_ORIGINS = [
         "http://localhost:3000",
         "http://localhost:5173",
+        "http://localhost:8082",  # Vite dev server default port
         "http://127.0.0.1:3000",
-        "http://127.0.0.1:5173"
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:8082"   # Vite dev server default port
     ]
 
     # Server Configuration

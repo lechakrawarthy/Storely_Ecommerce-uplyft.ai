@@ -20,7 +20,7 @@ import {
     Check,
     AlertCircle,
     Loader2
-} from 'lucide-react';
+} from '../utils/icons';
 import { Link } from 'react-router-dom';
 
 interface ShippingAddress {

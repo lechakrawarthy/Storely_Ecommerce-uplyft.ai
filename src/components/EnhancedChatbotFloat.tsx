@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageCircle, X, Send, Minimize2, Maximize2, ShoppingCart, Bot, Sparkles, Zap, Package, Search, ArrowRight, Loader, RefreshCw } from 'lucide-react';
+import { MessageCircle, X, Send, Minimize2, Maximize2, ShoppingCart, Bot, Sparkles, Zap, Package, Search, ArrowRight, Loader, RefreshCw } from '../utils/icons';
 import { useCart } from '../contexts/CartContext';
-import type { Product } from './BooksSection';
+import type { Product } from '../data/products';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { useToast } from '../hooks/use-toast';
+import OptimizedImage from './OptimizedImage';
 
 // API URL from environment or default to local development
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -31,39 +32,40 @@ interface ChatSession {
 }
 
 const ProductChatCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
-  return (
-    <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 max-w-xs transition-all hover:shadow-md">
-      <div className="flex gap-3">
-        <img
-          src={product.image}
-          alt={product.title}
-          className="w-16 h-16 object-cover rounded-lg"
-          loading="lazy"
-        />
-        <div className="flex-1">
-          <h4 className="font-medium text-sm text-gray-800 line-clamp-2">{product.title}</h4>
-          <div className="flex items-center gap-1 mt-1">
-            <span className="text-xs text-yellow-500">★</span>
-            <span className="text-xs text-gray-600">{product.rating}</span>
+  return (<div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 max-w-xs transition-all hover:shadow-md">
+    <div className="flex gap-3">
+      <OptimizedImage
+        src={product.image}
+        alt={product.title}
+        className="w-16 h-16 object-cover rounded-lg"
+        width={64}
+        height={64}
+        sizes="64px"
+      />
+      <div className="flex-1">
+        <h4 className="font-medium text-sm text-gray-800 line-clamp-2">{product.title}</h4>
+        <div className="flex items-center gap-1 mt-1">
+          <span className="text-xs text-yellow-500">★</span>
+          <span className="text-xs text-gray-600">{product.rating}</span>
+        </div>
+        <div className="flex items-center justify-between mt-2">
+          <div>
+            <span className="text-sm font-bold text-gray-900">₹{product.price}</span>
+            {product.originalPrice && (
+              <span className="text-xs text-gray-400 line-through ml-1">₹{product.originalPrice}</span>
+            )}
           </div>
-          <div className="flex items-center justify-between mt-2">
-            <div>
-              <span className="text-sm font-bold text-gray-900">₹{product.price}</span>
-              {product.originalPrice && (
-                <span className="text-xs text-gray-400 line-through ml-1">₹{product.originalPrice}</span>
-              )}
-            </div>
-            <button
-              onClick={() => onAddToCart(product)}
-              className="bg-green-500 hover:bg-green-600 text-white p-1.5 rounded-lg transition-colors"
-              aria-label="Add to cart"
-            >
-              <ShoppingCart className="w-3 h-3" />
-            </button>
-          </div>
+          <button
+            onClick={() => onAddToCart(product)}
+            className="bg-green-500 hover:bg-green-600 text-white p-1.5 rounded-lg transition-colors"
+            aria-label="Add to cart"
+          >
+            <ShoppingCart className="w-3 h-3" />
+          </button>
         </div>
       </div>
     </div>
+  </div>
   );
 };
 
@@ -157,10 +159,9 @@ const ChatbotFloat: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
   const loadSession = useCallback(async (id: string) => {
     setIsConnecting(true);
-    setConnectionError(false);
+    // Don't reset connection error here, let individual failures handle it
 
     try {
       const response = await axios.get(`${API_URL}/api/sessions/${id}`);
@@ -192,31 +193,34 @@ const ChatbotFloat: React.FC = () => {
     } catch (error) {
       console.log('No existing session found or error loading session');
       // If no session exists, that's expected for new users - no need to show error
-      // Only set error if it's not a 404
+      // Only set error if it's not a 404 and it's a real connection issue
       if (axios.isAxiosError(error) && error.response?.status !== 404) {
-        setConnectionError(true);
-        toast({
-          variant: "destructive",
-          title: "Connection error",
-          description: "Could not connect to chatbot service",
-        });
+        console.error('Session loading error (not 404):', error);
+        // Only set connection error for non-404 errors that indicate real connectivity issues
+        if (error.code === 'ECONNREFUSED' || error.code === 'NETWORK_ERROR') {
+          setConnectionError(true);
+          toast({
+            variant: "destructive",
+            title: "Connection error",
+            description: "Could not connect to chatbot service",
+          });
+        }
       }
     } finally {
       setIsConnecting(false);
     }
-  }, [toast]);
-
-  // Initialize session ID once when component mounts
+  }, [toast]);  // Initialize session ID once when component mounts
   useEffect(() => {
     if (!sessionId) {
       // Use user ID if logged in, otherwise create a random session ID
       const newSessionId = user?.id || `anon_${Math.random().toString(36).substring(2, 11)}`;
       setSessionId(newSessionId);
+      console.log('🎯 Session ID created:', newSessionId);
 
-      // Try to load existing session from API
-      loadSession(newSessionId);
+      // Don't load session on first mount to avoid connection errors affecting initial state
+      // Session will be created when user sends first message
     }
-  }, [user, sessionId, loadSession]);
+  }, [user, sessionId]);
 
   // Check for mobile screen
   useEffect(() => {
@@ -248,9 +252,11 @@ const ChatbotFloat: React.FC = () => {
 
     setMessages(prev => [...prev, newMessage]);
     handleApiRequest(suggestion);
-  };
-  const handleApiRequest = async (userMessage: string) => {
+  }; const handleApiRequest = async (userMessage: string) => {
     setIsTyping(true);
+    console.log('💬 Sending message to API:', userMessage);
+    console.log('🔗 API URL:', API_URL);
+    console.log('🏷️ Session ID:', sessionId);
 
     // Store user's search for learning preferences
     setUserPreferences(prev => ({
@@ -259,13 +265,25 @@ const ChatbotFloat: React.FC = () => {
     }));
 
     try {
-      const response = await axios.post(`${API_URL}/api/chat`, {
+      const requestData = {
         message: userMessage,
         session_id: sessionId,
         user_id: user?.id,
         preferences: userPreferences,
         timestamp: new Date().toISOString()
+      };
+
+      console.log('📤 Request data:', requestData);
+
+      const response = await axios.post(`${API_URL}/api/chat`, requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000, // 10 second timeout
       });
+
+      console.log('✅ API Response received successfully');
+      console.log('📨 Response data:', response.data);
 
       setIsTyping(false);
 
@@ -283,7 +301,8 @@ const ChatbotFloat: React.FC = () => {
         };
 
         setMessages(prev => [...prev, newMessage]);
-        setConnectionError(false);
+        setConnectionError(false); // Clear any previous connection errors
+        console.log('🎉 Bot message added successfully');
 
         // Update user preferences based on bot recommendations
         if (botResponse.learned_preferences) {
@@ -294,11 +313,19 @@ const ChatbotFloat: React.FC = () => {
         }
       }
     } catch (error) {
-      console.error('Error communicating with chatbot API:', error);
+      console.error('❌ API Communication Error:');
+      console.error('Error details:', error);
+
+      if (axios.isAxiosError(error)) {
+        console.error('Response status:', error.response?.status);
+        console.error('Response data:', error.response?.data);
+        console.error('Error message:', error.message);
+      }
+
       setIsTyping(false);
       setConnectionError(true);
 
-      // Provide more helpful offline fallback
+      // Provide helpful offline fallback
       const fallbackMessage = generateOfflineResponse(userMessage);
 
       const errorMessage: Message = {
@@ -313,8 +340,8 @@ const ChatbotFloat: React.FC = () => {
 
       toast({
         variant: "destructive",
-        title: "Working offline",
-        description: "Providing basic assistance while reconnecting...",
+        title: "Connection Error",
+        description: `Could not reach the server. Please check if the backend is running on ${API_URL}`,
       });
     }
   };

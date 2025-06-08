@@ -11,7 +11,7 @@ import {
 } from '../utils/searchTestUtils';
 import { searchProducts } from '../data/products';
 import type { Product } from '../data/products';
-import { Play, Download, CheckCircle, XCircle, Clock, Database } from 'lucide-react';
+import { Play, Download, CheckCircle, XCircle, Clock, Database } from '../utils/icons';
 
 interface BenchmarkResults {
     averageTime: number;

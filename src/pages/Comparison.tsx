@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "../utils/icons";
 import MobileProductComparison from "../components/MobileProductComparison";
 import { useComparison } from "../hooks/use-comparison";
 
