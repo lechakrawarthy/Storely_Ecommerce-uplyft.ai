@@ -1,9 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Minimize2, Maximize2, ShoppingCart, Bot, Sparkles, Zap, Package, Search, ArrowRight } from 'lucide-react';
+import { MessageCircle, X, Send, Minimize2, Maximize2, ShoppingCart, Bot, Sparkles, Zap, Package, Search, ArrowRight, Loader, RefreshCw } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import type { Product } from './BooksSection';
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
+import { useToast } from '../hooks/use-toast';
 
-// Sample products for chatbot recommendations
+// API URL from environment or default to local development
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+interface ChatSession {
+  id: string;
+  timestamp: string;
+  history: Message[];
+}
+
+// Sample products for chatbot recommendations (fallback)
 const sampleProducts: Product[] = [
   {
     id: 'e1',
@@ -60,7 +72,7 @@ const sampleProducts: Product[] = [
 ];
 
 interface Message {
-  id: number;
+  id: number | string;
   text?: string;
   sender: 'user' | 'bot';
   timestamp: Date;
@@ -116,20 +128,21 @@ const TypingIndicator = () => (
       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
     </div>
-    <span className="text-xs text-gray-500 ml-2">Storely AI is typing...</span>
+    <span className="text-xs text-gray-500 ml-2">BookBuddy AI is thinking...</span>
   </div>
 );
 
-const ChatbotFloat = () => {
+const ChatbotFloat: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [message, setMessage] = useState('');
+  const [sessionId, setSessionId] = useState<string>('');
   const [isTyping, setIsTyping] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "Hi! I'm Storely Assistant 🤖 Your smart shopping companion! I can help you find products, track orders, and discover amazing deals.",
+      text: "Hi! I'm BookBuddy Assistant 📚 Your personal book concierge! I can help you find books, check prices, and recommend great reads based on your interests.",
       sender: 'bot',
       timestamp: new Date(),
       type: 'text'
@@ -139,12 +152,27 @@ const ChatbotFloat = () => {
       sender: 'bot',
       timestamp: new Date(),
       type: 'suggestions',
-      suggestions: ['Show me shoes', 'Help with return', 'Browse categories', 'Deals under ₹500']
+      suggestions: ['Find fiction books', 'Book recommendations', 'Browse categories', 'Books under ₹500']
     }
   ]);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState(false);
 
   const { addItem } = useCart();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  // Initialize session ID once when component mounts
+  useEffect(() => {
+    if (!sessionId) {
+      // Use user ID if logged in, otherwise create a random session ID
+      const newSessionId = user?.id || `anon_${Math.random().toString(36).substring(2, 11)}`;
+      setSessionId(newSessionId);
+
+      // Try to load existing session from API
+      loadSession(newSessionId);
+    }
+  }, [user, sessionId]);
 
   // Check for mobile screen
   useEffect(() => {
@@ -156,6 +184,48 @@ const ChatbotFloat = () => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  const loadSession = async (id: string) => {
+    setIsConnecting(true);
+    setConnectionError(false);
+    
+    try {
+      const response = await axios.get(`${API_URL}/api/sessions/${id}`);
+      
+      if (response.data && response.data.history?.length > 0) {
+        // Convert API format to our message format
+        const loadedMessages = response.data.history.map((msg: any) => ({
+          id: msg.id || Date.now() + Math.random(),
+          text: msg.message,
+          sender: msg.sender,
+          timestamp: new Date(msg.timestamp),
+          type: msg.products ? 'product' : msg.suggestions ? 'suggestions' : 'text',
+          products: msg.products,
+          suggestions: msg.suggestions
+        }));
+        
+        setMessages(loadedMessages);
+        toast({
+          title: "Session loaded",
+          description: "Your previous conversation has been restored",
+        });
+      }
+    } catch (error) {
+      console.log('No existing session found or error loading session');
+      // If no session exists, that's expected for new users - no need to show error
+      // Only set error if it's not a 404
+      if (axios.isAxiosError(error) && error.response?.status !== 404) {
+        setConnectionError(true);
+        toast({
+          variant: "destructive",
+          title: "Connection error",
+          description: "Could not connect to chatbot service",
+        });
+      }
+    } finally {
+      setIsConnecting(false);
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -175,113 +245,57 @@ const ChatbotFloat = () => {
     };
 
     setMessages(prev => [...prev, newMessage]);
-    handleBotResponse(suggestion);
+    handleApiRequest(suggestion);
   };
 
-  const handleBotResponse = (userMessage: string) => {
+  const handleApiRequest = async (userMessage: string) => {
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const response = await axios.post(`${API_URL}/api/chat`, {
+        message: userMessage,
+        session_id: sessionId
+      });
+
       setIsTyping(false);
 
-      const lowerMessage = userMessage.toLowerCase();
-      let botResponse: Message;
-
-      if (lowerMessage.includes('shoes') || lowerMessage.includes('fashion')) {
-        // Highlight fashion products in the grid
-        highlightProducts('Fashion');
-        botResponse = {
+      if (response.data && response.data.response) {
+        const botResponse = response.data.response;
+        
+        const newMessage: Message = {
           id: Date.now(),
-          text: "Here are some trending shoes I found for you! 👟 I've also highlighted fashion items in the product grid below.",
+          text: botResponse.message,
           sender: 'bot',
           timestamp: new Date(),
-          type: 'product',
-          products: sampleProducts.filter(p => p.category === 'Fashion')
+          type: botResponse.products ? 'product' : botResponse.suggestions?.length ? 'suggestions' : 'text',
+          products: botResponse.products,
+          suggestions: botResponse.suggestions
         };
-      } else if (lowerMessage.includes('electronics') || lowerMessage.includes('headphone') || lowerMessage.includes('earbuds')) {
-        // Scroll to electronics section and highlight
-        scrollToSection('electronics');
-        highlightProducts('Electronics');
-        botResponse = {
-          id: Date.now(),
-          text: "Check out these amazing electronics! 🎧 Scrolling to electronics section...",
-          sender: 'bot',
-          timestamp: new Date(),
-          type: 'product',
-          products: sampleProducts.filter(p => p.category === 'Electronics')
-        };
-      } else if (lowerMessage.includes('books') || lowerMessage.includes('read')) {
-        scrollToSection('books');
-        highlightProducts('Books');
-        botResponse = {
-          id: Date.now(),
-          text: "Perfect! Here are some bestselling books 📚 Check the books section below!",
-          sender: 'bot',
-          timestamp: new Date(),
-          type: 'product',
-          products: sampleProducts.filter(p => p.category === 'Books')
-        };
-      } else if (lowerMessage.includes('categories') || lowerMessage.includes('browse')) {
-        scrollToSection('products');
-        botResponse = {
-          id: Date.now(),
-          text: "Browse our main categories! What interests you most?",
-          sender: 'bot',
-          timestamp: new Date(),
-          type: 'suggestions',
-          suggestions: ['Electronics 📱', 'Fashion & Textiles 👕', 'Books 📚', 'All Categories']
-        };
-      } else if (lowerMessage.includes('deal') || lowerMessage.includes('₹500') || lowerMessage.includes('500')) {
-        botResponse = {
-          id: Date.now(),
-          text: "Great deals under ₹500! Here are some budget-friendly options:",
-          sender: 'bot',
-          timestamp: new Date(),
-          type: 'product',
-          products: sampleProducts.filter(p => p.price <= 500)
-        };
-      } else if (lowerMessage.includes('return') || lowerMessage.includes('help')) {
-        botResponse = {
-          id: Date.now(),
-          text: "I can help you with returns! Our return policy allows 7-day hassle-free returns. Would you like me to guide you through the return process?",
-          sender: 'bot',
-          timestamp: new Date(),
-          type: 'suggestions',
-          suggestions: ['Start Return Process', 'Return Policy Details', 'Contact Support']
-        };
-      } else if (lowerMessage.includes('track') || lowerMessage.includes('order')) {
-        botResponse = {
-          id: Date.now(),
-          text: "I can help you track your order! Please provide your order number or email address.",
-          sender: 'bot',
-          timestamp: new Date(),
-          type: 'suggestions',
-          suggestions: ['Enter Order Number', 'Track by Email', 'Recent Orders']
-        };
-      } else {
-        botResponse = {
-          id: Date.now(),
-          text: "I can help you find products, track orders, or answer questions about our policies. What would you like to explore?",
-          sender: 'bot',
-          timestamp: new Date(),
-          type: 'suggestions',
-          suggestions: ['Show Products', 'Track Order', 'Support', 'Browse Categories']
-        };
+        
+        setMessages(prev => [...prev, newMessage]);
+        setConnectionError(false);
       }
-
-      setMessages(prev => [...prev, botResponse]);
-    }, 1500);
-  };
-
-  const highlightProducts = (category: string) => {
-    // Add glow effect to matching products in the grid
-    const productCards = document.querySelectorAll(`[data-category="${category}"]`);
-    productCards.forEach(card => {
-      card.classList.add('ring-4', 'ring-blue-400', 'ring-opacity-50', 'animate-pulse');
-      setTimeout(() => {
-        card.classList.remove('ring-4', 'ring-blue-400', 'ring-opacity-50', 'animate-pulse');
-      }, 3000);
-    });
+    } catch (error) {
+      console.error('Error communicating with chatbot API:', error);
+      setIsTyping(false);
+      setConnectionError(true);
+      
+      const errorMessage: Message = {
+        id: Date.now(),
+        text: "Sorry, I'm having trouble connecting to my brain. Please try again later.",
+        sender: 'bot',
+        timestamp: new Date(),
+        type: 'text'
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+      
+      toast({
+        variant: "destructive",
+        title: "Connection error",
+        description: "Could not connect to chatbot service",
+      });
+    }
   };
 
   const sendMessage = () => {
