@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Heart, Star, ShoppingCart, Filter, Grid, List, Search, SlidersHorizontal, Zap, X } from 'lucide-react';
+import { Heart, Star, ShoppingCart, Filter, Grid, List, Search, SlidersHorizontal, Zap, X } from '../utils/icons';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useToast } from './ui/use-toast';

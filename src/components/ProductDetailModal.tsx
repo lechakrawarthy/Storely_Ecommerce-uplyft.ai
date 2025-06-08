@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Star, Heart, ShoppingCart, Truck, Shield, RefreshCw, Plus, Minus, Zap, Award, Clock } from 'lucide-react';
+import { X, Star, Heart, ShoppingCart, Truck, Shield, RefreshCw, Plus, Minus, Zap, Award, Clock } from '../utils/icons';
 import { useCart } from '../contexts/CartContext';
 import type { Product } from './BooksSection';
 
@@ -110,8 +110,8 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
                             {/* Stock Status */}
                             <div className="absolute bottom-4 left-4">
                                 <div className={`px-3 py-1 rounded-full text-xs font-medium ${product.inStock
-                                        ? 'bg-green-100 text-green-700 border border-green-200'
-                                        : 'bg-red-100 text-red-700 border border-red-200'
+                                    ? 'bg-green-100 text-green-700 border border-green-200'
+                                    : 'bg-red-100 text-red-700 border border-red-200'
                                     }`}>
                                     {product.inStock ? '✅ In Stock' : '❌ Out of Stock'}
                                 </div>
@@ -125,8 +125,8 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
                                     key={index}
                                     onClick={() => setSelectedImage(index)}
                                     className={`aspect-square w-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index
-                                            ? 'border-sage-400 shadow-md'
-                                            : 'border-white/30 hover:border-sage-300'
+                                        ? 'border-sage-400 shadow-md'
+                                        : 'border-white/30 hover:border-sage-300'
                                         }`}
                                 >
                                     <img src={img} alt="" className="w-full h-full object-cover" />
@@ -158,8 +158,8 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
                                     <Star
                                         key={i}
                                         className={`w-5 h-5 ${i < Math.floor(product.rating)
-                                                ? 'fill-yellow-400 text-yellow-400'
-                                                : 'text-gray-300'
+                                            ? 'fill-yellow-400 text-yellow-400'
+                                            : 'text-gray-300'
                                             }`}
                                     />
                                 ))}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Heart, Zap } from 'lucide-react';
+import { Sparkles, Heart, Zap } from '../utils/icons';
 
 const categories = [
   {

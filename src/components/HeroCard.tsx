@@ -1,5 +1,6 @@
 import React from "react";
-import { ArrowRight, Twitter, Instagram, Youtube, Linkedin, Heart, Package, Truck, Shield, Star, Gift, Sparkles, TrendingUp } from "lucide-react";
+import { ArrowRight, Twitter, Instagram, Youtube, Linkedin, Heart, Package, Truck, Shield, Star, Gift, Sparkles, TrendingUp } from "../utils/icons";
+import OptimizedImage from "./OptimizedImage";
 
 const HeroCard = () => {
     const handleViewAll = () => {
@@ -45,15 +46,17 @@ const HeroCard = () => {
                             <Youtube className="w-5 h-5 text-gray-400 hover:text-red-400 cursor-pointer transition-colors" />
                             <Linkedin className="w-5 h-5 text-gray-400 hover:text-blue-600 cursor-pointer transition-colors" />
                         </div>
-                    </div>
-
-                    {/* Right Product Image */}
+                    </div>                    {/* Right Product Image */}
                     <div className="flex-1 flex items-center justify-center relative">
                         <div className="w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-3xl overflow-hidden shadow-lg bg-gradient-to-br from-gray-50 to-gray-100">
-                            <img
+                            <OptimizedImage
                                 src="https://cdn2.hubspot.net/hubfs/53/ecommerce%20marketing.jpg"
                                 alt="Shopping Cart and Products"
                                 className="w-full h-full object-cover z-10"
+                                priority={true}
+                                width={320}
+                                height={320}
+                                sizes="(max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
                             />
                         </div>
                         {/* Floating dots - Hide on mobile for cleaner look */}
@@ -97,12 +100,14 @@ const HeroCard = () => {
                             <h4 className="text-base font-semibold text-gray-800">Premium<br />Electronics</h4>
                             <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
                         </div>
-                        <div className="text-xs text-gray-500 mb-3">Latest Technology</div>
-                        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4">
-                            <img
+                        <div className="text-xs text-gray-500 mb-3">Latest Technology</div>                        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4">
+                            <OptimizedImage
                                 src="https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?auto=format&fit=crop&w=400&q=80"
                                 alt="Electronics"
                                 className="w-full h-16 object-cover rounded-lg group-hover:scale-105 transition-transform"
+                                width={400}
+                                height={64}
+                                sizes="400px"
                             />
                         </div>
                     </div>
@@ -113,12 +118,14 @@ const HeroCard = () => {
                             <h4 className="text-base font-semibold text-gray-800">Fashion &<br />Textiles</h4>
                             <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
                         </div>
-                        <div className="text-xs text-gray-500 mb-3">Trendy & Comfortable</div>
-                        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4">
-                            <img
+                        <div className="text-xs text-gray-500 mb-3">Trendy & Comfortable</div>                        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4">
+                            <OptimizedImage
                                 src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=400&q=80"
                                 alt="Fashion"
                                 className="w-full h-16 object-cover rounded-lg group-hover:scale-105 transition-transform"
+                                width={400}
+                                height={64}
+                                sizes="400px"
                             />
                         </div>
                     </div>

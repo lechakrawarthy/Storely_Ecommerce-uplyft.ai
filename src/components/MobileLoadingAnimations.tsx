@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader2, RefreshCw, ShoppingBag, Heart, Star } from 'lucide-react';
+import { Loader2, RefreshCw, ShoppingBag, Heart, Star } from '../utils/icons';
 
 interface MobileLoadingAnimationsProps {
     type: 'spinner' | 'pulse' | 'wave' | 'bounce' | 'skeleton' | 'cart' | 'heart' | 'rating';

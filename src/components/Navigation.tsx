@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Heart, ShoppingBag, User, LogOut, Menu, X, Clock, TrendingUp } from 'lucide-react';
+import { Search, Heart, ShoppingBag, User, LogOut, Menu, X, Clock, TrendingUp } from '../utils/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { useSearch } from '../contexts/SearchContext';
 import MobileMenuOverlay from './MobileMenuOverlay';
 import MobileSearchBar from './MobileSearchBar';
@@ -199,14 +199,13 @@ const Navigation = () => {
                   <LogOut className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
-            ) : (
-              <Link
-                to="/login"
-                className="flex items-center gap-2 bg-lime-300 hover:bg-lime-400 text-black font-semibold px-4 py-2 rounded-full transition-all shadow-md hover:shadow-lg"
-              >
-                <User className="w-4 h-4" />
-                <span>Login</span>
-              </Link>
+            ) : (<Link
+              to="/login"
+              className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-full transition-all shadow-md hover:shadow-lg"
+            >
+              <User className="w-4 h-4" />
+              <span>Login</span>
+            </Link>
             )}
           </div>
         </div>        {/* Mobile Navigation */}

@@ -1,5 +1,4 @@
 import React, { memo, useCallback, useMemo } from 'react'
-import { debounce } from 'lodash-es'
 
 // Performance utilities and optimizations
 

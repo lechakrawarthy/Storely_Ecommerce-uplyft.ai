@@ -2,11 +2,18 @@ import React, { createContext, useContext, useReducer, useEffect, ReactNode } fr
 
 export interface User {
     id: string;
-    email: string;
+    email?: string;
     name: string;
     phone?: string;
     avatar?: string;
-    createdAt: Date;
+    username?: string;
+    is_phone_verified?: boolean;
+    is_email_verified?: boolean;
+    created_at: string;
+    updated_at: string;
+    last_login?: string;
+    is_active: boolean;
+    preferences?: Record<string, unknown>;
 }
 
 interface AuthState {
@@ -85,12 +92,18 @@ interface SignupCredentials extends LoginCredentials {
 interface AuthContextType extends AuthState {
     login: (credentials: LoginCredentials) => Promise<void>;
     signup: (credentials: SignupCredentials) => Promise<void>;
-    logout: () => void;
-    sendOTP: (phone: string) => Promise<void>;
+    logout: () => Promise<void>;
+    sendOTP: (phone: string, purpose?: string) => Promise<void>;
     clearError: () => void;
+    updateProfile: (data: Partial<User>) => Promise<User>;
+    changePassword: (currentPassword: string, newPassword: string, confirmPassword: string) => Promise<void>;
+    verifyPhone: (phone: string, otp: string) => Promise<User>;
+    refreshToken: () => Promise<string>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export { AuthContext };
 
 // Secure session storage utility
 class SecureStorage {
@@ -107,12 +120,12 @@ class SecureStorage {
         }
     }
 
-    static setItem(key: string, value: any): void {
+    static setItem(key: string, value: unknown): void {
         const encrypted = this.encrypt(JSON.stringify(value));
         sessionStorage.setItem(key, encrypted);
     }
 
-    static getItem(key: string): any {
+    static getItem(key: string): unknown {
         const encrypted = sessionStorage.getItem(key);
         if (!encrypted) return null;
 
@@ -133,81 +146,176 @@ class SecureStorage {
     }
 }
 
-// Mock API functions - replace with real API calls
-const mockAPI = {
-    async login(credentials: LoginCredentials): Promise<User> {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+// API configuration
+const API_BASE_URL = 'http://localhost:5000/api';
 
-        // Mock validation
-        if (credentials.email === 'user@example.com' && credentials.password === 'password') {
-            return {
-                id: '1',
-                email: credentials.email,
-                name: 'Ryman Alex',
-                avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80',
-                createdAt: new Date(),
-            };
-        }
+// API utility functions
+class APIClient {
+    private static getAuthHeader(): Record<string, string> {
+        const token = SecureStorage.getItem('token');
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    }
 
-        if (credentials.phone === '+1234567890' && credentials.otp === '123456') {
-            return {
-                id: '2',
-                email: 'phone@example.com',
-                name: 'Phone User',
-                phone: credentials.phone,
-                createdAt: new Date(),
-            };
-        }
-
-        throw new Error('Invalid credentials');
-    },
-
-    async signup(credentials: SignupCredentials): Promise<User> {
-        await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate API delay
-
-        if (!credentials.name || credentials.name.length < 2) {
-            throw new Error('Name must be at least 2 characters long');
-        }
-
-        if (credentials.email && !credentials.email.includes('@')) {
-            throw new Error('Invalid email address');
-        }
-
-        if (credentials.password && credentials.password.length < 6) {
-            throw new Error('Password must be at least 6 characters long');
-        }
-
-        if (credentials.password !== credentials.confirmPassword) {
-            throw new Error('Passwords do not match');
-        }
-
-        return {
-            id: Date.now().toString(),
-            email: credentials.email || `${credentials.phone}@phone.com`,
-            name: credentials.name,
-            phone: credentials.phone,
-            createdAt: new Date(),
+    static async request(endpoint: string, options: RequestInit = {}): Promise<Record<string, unknown>> {
+        const url = `${API_BASE_URL}${endpoint}`;
+        const config: RequestInit = {
+            headers: {
+                'Content-Type': 'application/json',
+                ...this.getAuthHeader(),
+                ...options.headers,
+            },
+            ...options,
         };
+
+        const response = await fetch(url, config);
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || `HTTP error! status: ${response.status}`);
+        }
+
+        return data;
+    }
+}
+
+// Real API functions
+const authAPI = {
+    async login(credentials: LoginCredentials): Promise<{ user: User; token: string }> {
+        let requestData: Record<string, unknown> = {};
+
+        if (credentials.email && credentials.password) {
+            // Email + password login
+            requestData = {
+                type: 'email',
+                email: credentials.email,
+                password: credentials.password,
+            };
+        } else if (credentials.phone && credentials.otp) {
+            // Phone + OTP login
+            requestData = {
+                type: 'phone',
+                phone: credentials.phone,
+                otp: credentials.otp,
+            };
+        } else {
+            throw new Error('Invalid login credentials');
+        }
+
+        const response = await APIClient.request('/auth/login', {
+            method: 'POST',
+            body: JSON.stringify(requestData),
+        });
+
+        return { user: response.user as User, token: response.token as string };
     },
 
-    async sendOTP(phone: string): Promise<void> {
-        await new Promise(resolve => setTimeout(resolve, 800));
-        if (!phone || phone.length < 10) {
-            throw new Error('Invalid phone number');
+    async signup(credentials: SignupCredentials): Promise<{ user: User; token: string }> {
+        let requestData: Record<string, unknown> = {
+            name: credentials.name,
+        };
+
+        if (credentials.email && credentials.password) {
+            // Email signup
+            requestData = {
+                ...requestData,
+                type: 'email',
+                email: credentials.email,
+                password: credentials.password,
+                confirmPassword: credentials.confirmPassword,
+            };
+        } else if (credentials.phone && credentials.otp) {
+            // Phone signup
+            requestData = {
+                ...requestData,
+                type: 'phone',
+                phone: credentials.phone,
+                otp: credentials.otp,
+            };
+        } else {
+            throw new Error('Invalid signup credentials');
         }
-        // In real app, this would send an actual OTP
-        console.log(`OTP sent to ${phone}: 123456`);
+
+        const response = await APIClient.request('/auth/signup', {
+            method: 'POST',
+            body: JSON.stringify(requestData),
+        });
+
+        return { user: response.user as User, token: response.token as string };
+    },
+
+    async sendOTP(phone: string, purpose: string = 'login'): Promise<void> {
+        await APIClient.request('/auth/send-otp', {
+            method: 'POST',
+            body: JSON.stringify({ phone, purpose }),
+        });
+    },
+
+    async getUserProfile(): Promise<User> {
+        const response = await APIClient.request('/auth/profile');
+        return response.user as User;
+    },
+
+    async updateProfile(data: Partial<User>): Promise<User> {
+        const response = await APIClient.request('/auth/profile', {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+        return response.user as User;
+    },
+
+    async changePassword(currentPassword: string, newPassword: string, confirmPassword: string): Promise<void> {
+        await APIClient.request('/auth/change-password', {
+            method: 'POST',
+            body: JSON.stringify({
+                currentPassword,
+                newPassword,
+                confirmPassword,
+            }),
+        });
+    },
+
+    async verifyPhone(phone: string, otp: string): Promise<User> {
+        const response = await APIClient.request('/auth/verify-phone', {
+            method: 'POST',
+            body: JSON.stringify({ phone, otp }),
+        });
+        return response.user as User;
+    },
+
+    async logout(): Promise<void> {
+        await APIClient.request('/auth/logout', {
+            method: 'POST',
+        });
+    },
+
+    async refreshToken(): Promise<string> {
+        const response = await APIClient.request('/auth/refresh-token', {
+            method: 'POST',
+        });
+        return response.token as string;
     },
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [state, dispatch] = useReducer(authReducer, initialState);
-
-    // Load user from secure session storage on app start
+    const [state, dispatch] = useReducer(authReducer, initialState);    // Load user from secure session storage on app start
     useEffect(() => {
-        const savedUser = SecureStorage.getItem('user');
-        if (savedUser) {
+        const savedUser = SecureStorage.getItem('user') as User | null;
+        const savedToken = SecureStorage.getItem('token');
+
+        if (savedUser && savedToken) {
             dispatch({ type: 'AUTH_SUCCESS', payload: savedUser });
+
+            // Optionally verify token with server
+            authAPI.getUserProfile()
+                .then(user => {
+                    dispatch({ type: 'AUTH_SUCCESS', payload: user });
+                    SecureStorage.setItem('user', user);
+                })
+                .catch(() => {
+                    // Token might be expired, logout user
+                    SecureStorage.clear();
+                    dispatch({ type: 'LOGOUT' });
+                });
         }
     }, []);
 
@@ -215,54 +323,105 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login: async (credentials: LoginCredentials) => {
             dispatch({ type: 'AUTH_START' });
             try {
-                const user = await mockAPI.login(credentials);
+                const { user, token } = await authAPI.login(credentials);
                 SecureStorage.setItem('user', user);
+                SecureStorage.setItem('token', token);
                 dispatch({ type: 'AUTH_SUCCESS', payload: user });
+                return { success: true, user };
             } catch (error) {
                 dispatch({ type: 'AUTH_ERROR', payload: (error as Error).message });
+                throw error; // Re-throw to let the component know authentication failed
             }
         },
 
         signup: async (credentials: SignupCredentials) => {
             dispatch({ type: 'AUTH_START' });
             try {
-                const user = await mockAPI.signup(credentials);
+                const { user, token } = await authAPI.signup(credentials);
                 SecureStorage.setItem('user', user);
+                SecureStorage.setItem('token', token);
                 dispatch({ type: 'AUTH_SUCCESS', payload: user });
+                return { success: true, user };
             } catch (error) {
                 dispatch({ type: 'AUTH_ERROR', payload: (error as Error).message });
+                throw error; // Re-throw to let the component know authentication failed
             }
         },
 
-        logout: () => {
-            SecureStorage.clear();
-            dispatch({ type: 'LOGOUT' });
+        logout: async () => {
+            try {
+                await authAPI.logout();
+            } catch (error) {
+                // Continue with logout even if API call fails
+                console.warn('Logout API call failed:', error);
+            } finally {
+                SecureStorage.clear();
+                dispatch({ type: 'LOGOUT' });
+            }
         },
 
-        sendOTP: async (phone: string) => {
+        sendOTP: async (phone: string, purpose: string = 'login') => {
             try {
-                await mockAPI.sendOTP(phone);
+                await authAPI.sendOTP(phone, purpose);
             } catch (error) {
                 dispatch({ type: 'AUTH_ERROR', payload: (error as Error).message });
+                throw error; // Re-throw so the component can handle it
             }
         },
 
         clearError: () => {
             dispatch({ type: 'CLEAR_ERROR' });
         },
-    };
 
-    return (
+        // Additional methods for enhanced functionality
+        updateProfile: async (data: Partial<User>) => {
+            try {
+                const updatedUser = await authAPI.updateProfile(data);
+                SecureStorage.setItem('user', updatedUser);
+                dispatch({ type: 'AUTH_SUCCESS', payload: updatedUser });
+                return updatedUser;
+            } catch (error) {
+                dispatch({ type: 'AUTH_ERROR', payload: (error as Error).message });
+                throw error;
+            }
+        },
+
+        changePassword: async (currentPassword: string, newPassword: string, confirmPassword: string) => {
+            try {
+                await authAPI.changePassword(currentPassword, newPassword, confirmPassword);
+            } catch (error) {
+                dispatch({ type: 'AUTH_ERROR', payload: (error as Error).message });
+                throw error;
+            }
+        },
+
+        verifyPhone: async (phone: string, otp: string) => {
+            try {
+                const updatedUser = await authAPI.verifyPhone(phone, otp);
+                SecureStorage.setItem('user', updatedUser);
+                dispatch({ type: 'AUTH_SUCCESS', payload: updatedUser });
+                return updatedUser;
+            } catch (error) {
+                dispatch({ type: 'AUTH_ERROR', payload: (error as Error).message });
+                throw error;
+            }
+        },
+
+        refreshToken: async () => {
+            try {
+                const newToken = await authAPI.refreshToken();
+                SecureStorage.setItem('token', newToken);
+                return newToken;
+            } catch (error) {
+                // Token refresh failed, logout user
+                SecureStorage.clear();
+                dispatch({ type: 'LOGOUT' });
+                throw error;
+            }
+        },
+    }; return (
         <AuthContext.Provider value={{ ...state, ...authActions }}>
             {children}
         </AuthContext.Provider>
     );
-}
-
-export function useAuth() {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
 }

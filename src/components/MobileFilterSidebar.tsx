@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
+import { ChevronDown, ChevronUp, RotateCcw } from '../utils/icons';
 
 interface MobileFilterSidebarProps {
     isOpen: boolean;
@@ -127,8 +127,8 @@ const MobileFilterSidebar: React.FC<MobileFilterSidebarProps> = ({
                                             key={category}
                                             onClick={() => onCategoryChange(category)}
                                             className={`w-full text-left px-3 py-2.5 rounded-xl transition-colors ${selectedCategory === category
-                                                    ? 'bg-pastel-100 text-pastel-800 font-medium'
-                                                    : 'text-gray-700 hover:bg-gray-50'
+                                                ? 'bg-pastel-100 text-pastel-800 font-medium'
+                                                : 'text-gray-700 hover:bg-gray-50'
                                                 }`}
                                         >
                                             {category}
@@ -243,8 +243,8 @@ const MobileFilterSidebar: React.FC<MobileFilterSidebarProps> = ({
                                             key={option.value}
                                             onClick={() => onSortChange(option.value)}
                                             className={`w-full text-left px-3 py-2.5 rounded-xl transition-colors ${sortBy === option.value
-                                                    ? 'bg-pastel-100 text-pastel-800 font-medium'
-                                                    : 'text-gray-700 hover:bg-gray-50'
+                                                ? 'bg-pastel-100 text-pastel-800 font-medium'
+                                                : 'text-gray-700 hover:bg-gray-50'
                                                 }`}
                                         >
                                             {option.label}

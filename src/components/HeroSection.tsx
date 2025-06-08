@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle } from '../utils/icons';
 
 const HeroSection = () => {
   const scrollToChatbot = () => {
@@ -11,8 +11,8 @@ const HeroSection = () => {
   };
 
   return (
-    <section 
-      id="hero" 
+    <section
+      id="hero"
       className="min-h-screen relative overflow-hidden bg-gradient-to-br from-cream-50 to-pastel-50 flex flex-col items-center justify-center pt-16"
     >
       {/* Floating Book Emojis */}
@@ -31,15 +31,15 @@ const HeroSection = () => {
               Your friendly AI book concierge
             </span>
           </h1>
-          
+
           <p className="text-lg sm:text-xl text-sage-700 font-medium mb-8 max-w-2xl mx-auto">
-            Discover your next favorite read with personalized recommendations, 
+            Discover your next favorite read with personalized recommendations,
             surprise book boxes, and intelligent chat assistance.
           </p>
         </div>
 
         {/* CTA Button */}
-        <button 
+        <button
           onClick={scrollToChatbot}
           className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-pastel-500 to-sage-500 rounded-full shadow-soft hover:shadow-soft-hover transform hover:scale-105 transition-all duration-300 mb-16"
         >

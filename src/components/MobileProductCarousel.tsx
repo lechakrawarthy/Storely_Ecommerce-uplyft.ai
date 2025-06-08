@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Heart, ShoppingCart, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, ShoppingCart, Star } from '../utils/icons';
 import { useSwipe } from '../hooks/use-swipe';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useCart } from '../contexts/CartContext';
@@ -168,8 +168,8 @@ const MobileProductCarousel: React.FC<MobileProductCarouselProps> = ({
                                                 <button
                                                     onClick={(e) => handleWishlistToggle(product.id, e)}
                                                     className={`absolute top-3 right-3 p-2 rounded-full transition-all ${isInWishlist(product.id)
-                                                            ? 'bg-red-500 text-white shadow-lg'
-                                                            : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
+                                                        ? 'bg-red-500 text-white shadow-lg'
+                                                        : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
                                                         }`}
                                                 >
                                                     <Heart
@@ -200,8 +200,8 @@ const MobileProductCarousel: React.FC<MobileProductCarouselProps> = ({
                                                             <Star
                                                                 key={i}
                                                                 className={`w-3 h-3 ${i < Math.floor(product.rating)
-                                                                        ? 'text-yellow-400 fill-current'
-                                                                        : 'text-gray-300'
+                                                                    ? 'text-yellow-400 fill-current'
+                                                                    : 'text-gray-300'
                                                                     }`}
                                                             />
                                                         ))}
@@ -259,8 +259,8 @@ const MobileProductCarousel: React.FC<MobileProductCarouselProps> = ({
                             key={index}
                             onClick={() => goToSlide(index)}
                             className={`w-2 h-2 rounded-full transition-all ${index === currentIndex
-                                    ? 'bg-gray-800 w-6'
-                                    : 'bg-gray-300 hover:bg-gray-400'
+                                ? 'bg-gray-800 w-6'
+                                : 'bg-gray-300 hover:bg-gray-400'
                                 }`}
                         />
                     ))}

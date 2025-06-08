@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Plus, Minus, ShoppingCart, Trash2 } from 'lucide-react';
+import { X, Plus, Minus, ShoppingCart, Trash2 } from '../utils/icons';
 import { useCart } from '../contexts/CartContext';
 import { Link } from 'react-router-dom';
 import OptimizedImage from './OptimizedImage';

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Filter, X, ChevronLeft, ChevronRight, Star, SlidersHorizontal } from 'lucide-react';
+import { Filter, X, ChevronLeft, ChevronRight, Star, SlidersHorizontal } from '../utils/icons';
 import { useSwipe } from '../hooks/use-swipe';
 
 interface MobileAdvancedFiltersProps {
@@ -92,8 +92,8 @@ const MobileAdvancedFilters: React.FC<MobileAdvancedFiltersProps> = ({
                                 key={tab}
                                 onClick={() => setCurrentTab(index)}
                                 className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${currentTab === index
-                                        ? 'bg-white text-sage-600 shadow-sm'
-                                        : 'text-gray-600 hover:text-gray-800'
+                                    ? 'bg-white text-sage-600 shadow-sm'
+                                    : 'text-gray-600 hover:text-gray-800'
                                     }`}
                             >
                                 {tab}
@@ -127,8 +127,8 @@ const MobileAdvancedFilters: React.FC<MobileAdvancedFiltersProps> = ({
                                         key={category}
                                         onClick={() => onCategoryChange(category)}
                                         className={`p-4 rounded-xl text-left transition-all ${selectedCategory === category
-                                                ? 'bg-sage-100 border-2 border-sage-300 text-sage-700'
-                                                : 'bg-gray-50 border-2 border-transparent text-gray-700 hover:bg-gray-100'
+                                            ? 'bg-sage-100 border-2 border-sage-300 text-sage-700'
+                                            : 'bg-gray-50 border-2 border-transparent text-gray-700 hover:bg-gray-100'
                                             }`}
                                     >
                                         <span className="font-medium">{category}</span>
@@ -148,8 +148,8 @@ const MobileAdvancedFilters: React.FC<MobileAdvancedFiltersProps> = ({
                                         key={price.label}
                                         onClick={() => onPriceRangeChange(price.range)}
                                         className={`w-full p-4 rounded-xl text-left transition-all ${isPriceRangeSelected(price.range)
-                                                ? 'bg-sage-100 border-2 border-sage-300 text-sage-700'
-                                                : 'bg-gray-50 border-2 border-transparent text-gray-700 hover:bg-gray-100'
+                                            ? 'bg-sage-100 border-2 border-sage-300 text-sage-700'
+                                            : 'bg-gray-50 border-2 border-transparent text-gray-700 hover:bg-gray-100'
                                             }`}
                                     >
                                         <span className="font-medium">{price.label}</span>
@@ -169,8 +169,8 @@ const MobileAdvancedFilters: React.FC<MobileAdvancedFiltersProps> = ({
                                         key={option}
                                         onClick={() => onSortChange(option)}
                                         className={`w-full p-4 rounded-xl text-left transition-all flex items-center justify-between ${sortBy === option
-                                                ? 'bg-sage-100 border-2 border-sage-300 text-sage-700'
-                                                : 'bg-gray-50 border-2 border-transparent text-gray-700 hover:bg-gray-100'
+                                            ? 'bg-sage-100 border-2 border-sage-300 text-sage-700'
+                                            : 'bg-gray-50 border-2 border-transparent text-gray-700 hover:bg-gray-100'
                                             }`}
                                     >
                                         <span className="font-medium">{option}</span>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ChevronDown, ChevronUp, Sliders, Check } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, Sliders, Check } from '../utils/icons';
 
 interface FilterOption {
     id: string;
@@ -136,8 +136,8 @@ const MobileFiltersSheet: React.FC<MobileFiltersSheetProps> = ({
                                                                     className="sr-only"
                                                                 />
                                                                 <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${localFilters[section.id]?.includes(option.id)
-                                                                        ? 'bg-pastel-500 border-pastel-500'
-                                                                        : 'border-gray-300 group-hover:border-pastel-300'
+                                                                    ? 'bg-pastel-500 border-pastel-500'
+                                                                    : 'border-gray-300 group-hover:border-pastel-300'
                                                                     }`}>
                                                                     {localFilters[section.id]?.includes(option.id) && (
                                                                         <Check className="w-3 h-3 text-white" />
@@ -200,8 +200,8 @@ const MobileFiltersSheet: React.FC<MobileFiltersSheetProps> = ({
                                                                     className="sr-only"
                                                                 />
                                                                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${localFilters[section.id] === option.id
-                                                                        ? 'bg-pastel-500 border-pastel-500'
-                                                                        : 'border-gray-300 group-hover:border-pastel-300'
+                                                                    ? 'bg-pastel-500 border-pastel-500'
+                                                                    : 'border-gray-300 group-hover:border-pastel-300'
                                                                     }`}>
                                                                     {localFilters[section.id] === option.id && (
                                                                         <div className="w-2 h-2 bg-white rounded-full" />

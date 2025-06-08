@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Star, ShoppingCart, Eye, Share2 } from 'lucide-react';
+import { Heart, Star, ShoppingCart, Eye, Share2 } from '../utils/icons';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useToast } from './ui/use-toast';
@@ -148,8 +148,8 @@ const MobileProductCard: React.FC<MobileProductCardProps> = ({
                                     <Star
                                         key={i}
                                         className={`w-3 h-3 ${i < Math.floor(product.rating)
-                                                ? 'text-yellow-400 fill-current'
-                                                : 'text-gray-300'
+                                            ? 'text-yellow-400 fill-current'
+                                            : 'text-gray-300'
                                             }`}
                                     />
                                 ))}
@@ -172,8 +172,8 @@ const MobileProductCard: React.FC<MobileProductCardProps> = ({
                             onClick={addToCart}
                             disabled={!product.inStock}
                             className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-medium text-sm transition-all ${product.inStock
-                                    ? 'bg-gray-900 text-white hover:bg-gray-800 active:scale-95'
-                                    : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                ? 'bg-gray-900 text-white hover:bg-gray-800 active:scale-95'
+                                : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                                 }`}
                         >
                             <ShoppingCart className="w-4 h-4" />
@@ -183,8 +183,8 @@ const MobileProductCard: React.FC<MobileProductCardProps> = ({
                         <button
                             onClick={toggleWishlist}
                             className={`p-2 rounded-xl border transition-all ${isInWishlist
-                                    ? 'bg-red-50 border-red-200 text-red-500'
-                                    : 'bg-white border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200'
+                                ? 'bg-red-50 border-red-200 text-red-500'
+                                : 'bg-white border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200'
                                 }`}
                         >
                             <Heart className={`w-4 h-4 ${isInWishlist ? 'fill-current' : ''}`} />
@@ -243,8 +243,8 @@ const MobileProductCard: React.FC<MobileProductCardProps> = ({
                         <button
                             onClick={toggleWishlist}
                             className={`p-2 rounded-full backdrop-blur-md transition-all ${isInWishlist
-                                    ? 'bg-red-500 text-white'
-                                    : 'bg-white/80 text-gray-700 hover:bg-white'
+                                ? 'bg-red-500 text-white'
+                                : 'bg-white/80 text-gray-700 hover:bg-white'
                                 }`}
                         >
                             <Heart className={`w-4 h-4 ${isInWishlist ? 'fill-current' : ''}`} />
@@ -282,8 +282,8 @@ const MobileProductCard: React.FC<MobileProductCardProps> = ({
                             <Star
                                 key={i}
                                 className={`w-3 h-3 ${i < Math.floor(product.rating)
-                                        ? 'text-yellow-400 fill-current'
-                                        : 'text-gray-300'
+                                    ? 'text-yellow-400 fill-current'
+                                    : 'text-gray-300'
                                     }`}
                             />
                         ))}
@@ -304,8 +304,8 @@ const MobileProductCard: React.FC<MobileProductCardProps> = ({
                     onClick={addToCart}
                     disabled={!product.inStock}
                     className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-sm transition-all ${product.inStock
-                            ? 'bg-gray-900 text-white hover:bg-gray-800 active:scale-95'
-                            : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        ? 'bg-gray-900 text-white hover:bg-gray-800 active:scale-95'
+                        : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                         }`}
                 >
                     <ShoppingCart className="w-4 h-4" />

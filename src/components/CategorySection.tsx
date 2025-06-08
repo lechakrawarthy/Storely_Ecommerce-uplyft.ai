@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Monitor, BookOpen, Shirt, ArrowRight, Star, TrendingUp } from "lucide-react";
+import { Monitor, BookOpen, Shirt, ArrowRight, Star, TrendingUp } from "../utils/icons";
+import OptimizedImage from "./OptimizedImage";
 
 const categories = [
     {
@@ -55,13 +56,15 @@ const CategorySection = () => {
                         <div
                             key={category.name}
                             className="group relative overflow-hidden rounded-3xl glass-card border border-white/20 hover:glass-strong transition-all duration-500 transform hover:-translate-y-2 shadow-xl hover:shadow-2xl category-card-glow"
-                        >
-                            {/* Background Image with Glass Overlay */}
+                        >                            {/* Background Image with Glass Overlay */}
                             <div className="relative h-96 overflow-hidden">
-                                <img
+                                <OptimizedImage
                                     src={category.image}
                                     alt={category.name}
                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                    width={800}
+                                    height={384}
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover:from-black/80 group-hover:via-black/40 transition-all duration-500" />
 

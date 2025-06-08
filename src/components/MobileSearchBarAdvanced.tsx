@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, Clock, TrendingUp, Filter, ArrowRight } from 'lucide-react';
+import { Search, X, Clock, TrendingUp, Filter, ArrowRight } from '../utils/icons';
 import { useSwipe } from '../hooks/use-swipe';
 
 interface MobileSearchBarAdvancedProps {
@@ -123,8 +123,8 @@ const MobileSearchBarAdvanced: React.FC<MobileSearchBarAdvancedProps> = ({
                             key={category}
                             onClick={() => onCategoryFilter(category)}
                             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === category
-                                    ? 'bg-sage-500 text-white shadow-md'
-                                    : 'glass-subtle border border-white/20 text-gray-700 hover:glass-strong'
+                                ? 'bg-sage-500 text-white shadow-md'
+                                : 'glass-subtle border border-white/20 text-gray-700 hover:glass-strong'
                                 }`}
                         >
                             {category}

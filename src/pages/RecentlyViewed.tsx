@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, Clock, Trash2, Heart, ShoppingCart, Star } from 'lucide-react';
+import { ChevronLeft, Clock, Trash2, Heart, ShoppingCart, Star } from '../utils/icons';
 import { useRecentlyViewed } from '../hooks/use-recently-viewed';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useCart } from '../contexts/CartContext';
@@ -120,8 +120,8 @@ const RecentlyViewed = () => {
 
                         {/* Products Grid */}
                         <div className={`${isMobile
-                                ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
-                                : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+                            ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
+                            : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
                             }`}>
                             {recentlyViewed.map((product) => (
                                 <div key={product.id} className="relative group">
@@ -169,8 +169,8 @@ const RecentlyViewed = () => {
                                                         >
                                                             <Heart
                                                                 className={`w-4 h-4 ${wishlist.includes(product.id)
-                                                                        ? 'fill-red-500 text-red-500'
-                                                                        : 'text-gray-400'
+                                                                    ? 'fill-red-500 text-red-500'
+                                                                    : 'text-gray-400'
                                                                     }`}
                                                             />
                                                         </button>
