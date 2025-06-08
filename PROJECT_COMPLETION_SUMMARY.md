@@ -5,6 +5,16 @@
 **Final Version**: 2.0.0  
 **Status**: ✅ **PRODUCTION READY & ENTERPRISE GRADE**
 
+## 📞 Contact & Portfolio
+
+**Developer**:  L E CHAKRAWARTHY SREENIVAS  
+**📧 Email**: chakravarthi1597@gmail.com 
+**💼 LinkedIn**: [linkedin.com/in/lechakrawarthy](https://linkedin.com/in/lechakrawarthy)  
+**🐙 GitHub**: [github.com/lechakrawarthy](https://github.com/lechakrawarthy)  
+**🌐 Portfolio**: [lechakrawarthy18.vercel.app](https://lechakrawarthy18.vercel.app/)  
+
+*Ready to innovate at Uplyft.ai • Passionate about AI-driven solutions • Immediate availability*
+
 ---
 
 ## 💡 **Executive Summary**
