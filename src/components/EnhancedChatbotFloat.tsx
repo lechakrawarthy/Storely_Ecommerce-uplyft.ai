@@ -161,10 +161,10 @@ const ChatbotFloat: React.FC = () => {
   const loadSession = useCallback(async (id: string) => {
     setIsConnecting(true);
     setConnectionError(false);
-    
+
     try {
       const response = await axios.get(`${API_URL}/api/sessions/${id}`);
-        if (response.data && response.data.history?.length > 0) {
+      if (response.data && response.data.history?.length > 0) {
         // Convert API format to our message format
         const loadedMessages = response.data.history.map((msg: {
           id?: number;
@@ -182,7 +182,7 @@ const ChatbotFloat: React.FC = () => {
           products: msg.products,
           suggestions: msg.suggestions
         }));
-        
+
         setMessages(loadedMessages);
         toast({
           title: "Session loaded",
@@ -271,7 +271,7 @@ const ChatbotFloat: React.FC = () => {
 
       if (response.data && response.data.response) {
         const botResponse = response.data.response;
-        
+
         const newMessage: Message = {
           id: Date.now(),
           text: botResponse.message,
@@ -281,7 +281,7 @@ const ChatbotFloat: React.FC = () => {
           products: botResponse.products,
           suggestions: botResponse.suggestions
         };
-        
+
         setMessages(prev => [...prev, newMessage]);
         setConnectionError(false);
 
@@ -297,10 +297,10 @@ const ChatbotFloat: React.FC = () => {
       console.error('Error communicating with chatbot API:', error);
       setIsTyping(false);
       setConnectionError(true);
-      
+
       // Provide more helpful offline fallback
       const fallbackMessage = generateOfflineResponse(userMessage);
-      
+
       const errorMessage: Message = {
         id: Date.now(),
         text: fallbackMessage,
@@ -308,9 +308,9 @@ const ChatbotFloat: React.FC = () => {
         timestamp: new Date(),
         type: 'text'
       };
-      
+
       setMessages(prev => [...prev, errorMessage]);
-      
+
       toast({
         variant: "destructive",
         title: "Working offline",
@@ -322,7 +322,7 @@ const ChatbotFloat: React.FC = () => {
   // Enhanced offline fallback with basic NLP
   const generateOfflineResponse = (userInput: string): string => {
     const input = userInput.toLowerCase();
-    
+
     if (input.includes('book') || input.includes('read')) {
       return "📚 I'd love to help you find books! Try browsing our categories: Fiction, Non-fiction, Educational, or search for specific titles when I'm back online.";
     }
@@ -335,7 +335,7 @@ const ChatbotFloat: React.FC = () => {
     if (input.includes('electronic') || input.includes('gadget')) {
       return "📱 Our electronics section has great deals on headphones, smartwatches, and tech accessories!";
     }
-    
+
     return "I'm temporarily offline but will be back soon! Meanwhile, you can browse our catalog or try the search filters to find what you're looking for.";
   };
 
@@ -370,7 +370,7 @@ const ChatbotFloat: React.FC = () => {
         suggestions: ['🔍 Search products', '⭐ Show bestsellers', '💝 Get recommendations', '📱 Browse electronics']
       }
     ]);
-    
+
     // Create new session
     const newSessionId = user?.id ? `${user.id}_${Date.now()}` : `anon_${Math.random().toString(36).substring(2, 11)}`;
     setSessionId(newSessionId);
@@ -378,7 +378,7 @@ const ChatbotFloat: React.FC = () => {
 
   const sendMessage = () => {
     if (!message.trim()) return;
-    
+
     const newMessage: Message = {
       id: Date.now(),
       text: message,
@@ -437,8 +437,8 @@ const ChatbotFloat: React.FC = () => {
           )}
 
           <div className={`fixed z-50 transition-all duration-300 ${isMobile
-              ? 'inset-4 bg-white rounded-3xl shadow-2xl border border-gray-200'
-              : `bottom-24 right-6 w-96 ${isMinimized ? 'h-16' : 'h-[500px]'} bg-white rounded-2xl shadow-2xl border border-gray-200`
+            ? 'inset-4 bg-white rounded-3xl shadow-2xl border border-gray-200'
+            : `bottom-24 right-6 w-96 ${isMinimized ? 'h-16' : 'h-[500px]'} bg-white rounded-2xl shadow-2xl border border-gray-200`
             }`}>
             {/* Header */}
             <div className="bg-gradient-to-r from-sage-500 to-gold-500 p-4 text-white flex items-center justify-between rounded-t-2xl">
@@ -484,7 +484,7 @@ const ChatbotFloat: React.FC = () => {
                 <Loader size={12} className="animate-spin mr-2" /> Connecting to BookBuddy AI...
               </div>
             )}
-            
+
             {connectionError && (
               <div className="bg-red-50 p-2 text-xs text-center text-red-700">
                 Connection error - Some features may not work properly
@@ -510,8 +510,8 @@ const ChatbotFloat: React.FC = () => {
 
                         {msg.type === 'text' && msg.text && (
                           <div className={`p-3 rounded-2xl ${msg.sender === 'user'
-                              ? 'bg-gradient-to-r from-sage-500 to-gold-500 text-white'
-                              : 'bg-white border border-gray-200 text-gray-800'
+                            ? 'bg-gradient-to-r from-sage-500 to-gold-500 text-white'
+                            : 'bg-white border border-gray-200 text-gray-800'
                             }`}>
                             <p className="text-sm">{msg.text}</p>
                           </div>
