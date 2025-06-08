@@ -3,10 +3,14 @@ import Navigation from '../components/Navigation';
 import HeroCard from '../components/HeroCard';
 import ProductGrid from '../components/BooksSection';
 import CategorySection from '../components/CategorySection';
+import MobileRecentlyViewed from '../components/MobileRecentlyViewed';
 import FAQ from '../components/FAQ';
 import Footer from '../components/Footer';
+import { useIsMobile } from '../hooks/use-mobile';
 
 const Index = () => {
+  const isMobile = useIsMobile();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative flex flex-col overflow-x-hidden">
       {/* Background decoration for glass effect */}
@@ -19,8 +23,15 @@ const Index = () => {
       <main className="relative z-10 flex-1 max-w-7xl mx-auto w-full px-4 flex flex-col gap-10 pt-28 pb-24">
         <HeroCard />
         <CategorySection />
+
+        {/* Mobile Recently Viewed - Show only on mobile */}
+        {isMobile && (
+          <MobileRecentlyViewed className="lg:hidden" />
+        )}
+
         <ProductGrid />
-        <FAQ />      </main>
+        <FAQ />
+      </main>
       <Footer />
     </div>
   );

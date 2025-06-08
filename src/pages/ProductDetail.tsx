@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, Heart, ShoppingCart, Truck, Shield, RefreshCw, Plus, Minus, Zap, Award, Clock, Eye, Share } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
+import { useRecentlyViewed } from '../hooks/use-recently-viewed';
 import { allProducts, getProductById, type Product } from '../data/products';
 import MinimizedNavigation from '../components/MinimizedNavigation';
+import MobileProductNavigation from '../components/MobileProductNavigation';
 import Footer from '../components/Footer';
 import OptimizedImage from '../components/OptimizedImage';
 
@@ -12,16 +15,20 @@ const ProductDetail: React.FC = () => {
     const navigate = useNavigate();
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
-    const [isWishlisted, setIsWishlisted] = useState(false);
     const { addItem } = useCart();
+    const { wishlist, toggleWishlist } = useWishlist();
+    const { addToRecentlyViewed } = useRecentlyViewed();
 
     const product = getProductById(id || '');
 
     useEffect(() => {
         if (!product) {
             navigate('/');
+        } else {
+            // Add to recently viewed when product loads
+            addToRecentlyViewed(product);
         }
-    }, [product, navigate]);
+    }, [product, navigate, addToRecentlyViewed]);
 
     if (!product) return null;
 
@@ -99,15 +106,14 @@ const ProductDetail: React.FC = () => {
                             </div>
 
                             {/* Wishlist & Share */}
-                            <div className="absolute top-6 right-6 flex flex-col gap-3">
-                                <button
-                                    onClick={() => setIsWishlisted(!isWishlisted)}
-                                    className="p-4 glass-strong rounded-full hover:glass-card transition-all border border-white/30 animate-hover-lift"
-                                >
-                                    <Heart
-                                        className={`w-6 h-6 ${isWishlisted ? 'fill-red-500 text-red-500 animate-heart-bounce' : 'text-gray-600'}`}
-                                    />
-                                </button>
+                            <div className="absolute top-6 right-6 flex flex-col gap-3">                                <button
+                                onClick={() => toggleWishlist(product.id)}
+                                className="p-4 glass-strong rounded-full hover:glass-card transition-all border border-white/30 animate-hover-lift"
+                            >
+                                <Heart
+                                    className={`w-6 h-6 ${wishlist.includes(product.id) ? 'fill-red-500 text-red-500 animate-heart-bounce' : 'text-gray-600'}`}
+                                />
+                            </button>
                                 <button className="p-4 glass-strong rounded-full hover:glass-card transition-all border border-white/30 animate-hover-lift">
                                     <Share className="w-6 h-6 text-gray-600" />
                                 </button>
@@ -266,8 +272,12 @@ const ProductDetail: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </div>                </div>
+            </div>
+
+            {/* Mobile Product Navigation */}
+            <div className="lg:hidden">
+                <MobileProductNavigation currentProduct={product} />
             </div>
 
             <Footer />
