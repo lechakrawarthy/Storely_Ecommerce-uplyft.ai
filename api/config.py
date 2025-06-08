@@ -9,19 +9,21 @@ class Config:
     """Base configuration class"""
     SECRET_KEY = os.environ.get(
         'SECRET_KEY') or 'dev-secret-key-change-in-production'
-    DATABASE_URL = os.environ.get('DATABASE_URL') or 'sqlite:///bookbuddy.db'
-
-    # API Configuration
+    DATABASE_URL = os.environ.get(
+        'DATABASE_URL') or 'sqlite:///bookbuddy.db'    # API Configuration
     API_TITLE = "Enhanced E-commerce Chatbot API"
     API_VERSION = "1.0.0"
-    # CORS Configuration
     API_DESCRIPTION = "Comprehensive e-commerce chatbot with AI-powered recommendations"
+
+    # CORS Configuration
     CORS_ORIGINS = [
         "http://localhost:3000",
         "http://localhost:5173",
+        "http://localhost:8080",  # Current frontend port
         "http://localhost:8082",  # Vite dev server default port
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
+        "http://127.0.0.1:8080",  # Current frontend port
         "http://127.0.0.1:8082"   # Vite dev server default port
     ]
 

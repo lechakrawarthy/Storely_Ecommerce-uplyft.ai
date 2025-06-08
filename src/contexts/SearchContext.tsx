@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import type { Product } from '../data/products';
-import { searchProducts, getCategories, allProducts, sortProducts } from '../data/products';
+import {
+    searchProducts,
+    getCategories,
+    allProducts,
+    sortProducts,
+    loadProductsFromDB
+} from '../data/products';
 
 interface SearchContextType {
     searchQuery: string;

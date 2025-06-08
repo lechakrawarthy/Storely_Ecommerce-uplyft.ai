@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Grid } from '../utils/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSwipe } from '../hooks/use-swipe';
 import { allProducts, type Product } from '../data/products';
+import { useProductsLoadingState } from '../hooks/useProductsLoadingState';
 
 interface MobileProductNavigationProps {
     currentProduct: Product;
@@ -17,14 +18,19 @@ const MobileProductNavigation: React.FC<MobileProductNavigationProps> = ({
     const { id: currentId } = useParams();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showIndicator, setShowIndicator] = useState(false);
+    const { isLoading } = useProductsLoadingState();
 
     // Find current product index
     useEffect(() => {
-        const index = allProducts.findIndex(product => product.id === currentProduct.id);
-        setCurrentIndex(index);
-    }, [currentProduct.id]);
+        if (!isLoading) {
+            const index = allProducts.findIndex(product => product.id === currentProduct.id);
+            setCurrentIndex(index);
+        }
+    }, [currentProduct.id, isLoading]);
 
     const navigateToProduct = (direction: 'prev' | 'next') => {
+        if (isLoading) return; // Don't navigate while loading
+
         let newIndex = currentIndex;
 
         if (direction === 'prev' && currentIndex > 0) {
@@ -44,10 +50,9 @@ const MobileProductNavigation: React.FC<MobileProductNavigationProps> = ({
     };
 
     // Swipe gesture handling
-    const swipeHandlers = useSwipe({
-        onSwipeLeft: () => navigateToProduct('next'),
-        onSwipeRight: () => navigateToProduct('prev'),
-    }, {
+    const { onTouchStart, onTouchEnd } = useSwipe({
+        onSwipeLeft: () => !isLoading && navigateToProduct('next'),
+        onSwipeRight: () => !isLoading && navigateToProduct('prev'),
         threshold: 100,
         velocity: 0.3,
     });
@@ -58,10 +63,12 @@ const MobileProductNavigation: React.FC<MobileProductNavigationProps> = ({
     const nextProduct = hasNext ? allProducts[currentIndex + 1] : null;
 
     return (
-        <>            {/* Gesture Area - Full width invisible overlay */}
+        <>
+            {/* Gesture Area - Full width invisible overlay */}
             <div
-                ref={swipeHandlers.ref as React.RefObject<HTMLDivElement>}
                 className={`fixed inset-0 z-10 lg:hidden ${className}`}
+                onTouchStart={onTouchStart}
+                onTouchEnd={onTouchEnd}
                 style={{ pointerEvents: 'none' }}
             />
 
