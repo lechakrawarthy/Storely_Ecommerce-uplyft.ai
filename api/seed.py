@@ -7,7 +7,8 @@ import uuid
 def extract_products_from_ts():
     # Read products from TypeScript file
     try:
-        with open('../src/data/products.ts', 'r') as f:
+        products_file = os.path.join(os.path.dirname(__file__), '..', 'src', 'data', 'products.ts')
+        with open(products_file, 'r') as f:
             content = f.read()
         
         # Extract the array content using regex

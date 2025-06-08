@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useToast } from '../hooks/use-toast';
 
 // API URL from environment or default to local development
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 interface Message {
   id: number | string;
