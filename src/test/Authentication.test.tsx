@@ -3,7 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthProvider, useAuth } from '../contexts/AuthContext'
+import { AuthProvider } from '../contexts/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 import Login from '../pages/Login'
 import Signup from '../pages/Signup'
 
@@ -217,7 +218,7 @@ describe('Authentication Flow', () => {
                 </TestWrapper>
             )
 
-            await user.type(screen.getByPlaceholderText('Full Name'), 'John Doe')
+            await user.type(screen.getByPlaceholderText('Full Name'), 'chakrawarthy')
             await user.type(screen.getByPlaceholderText('Email Address'), 'john@example.com')
             await user.type(screen.getByPlaceholderText('Password'), 'password123')
             await user.type(screen.getByPlaceholderText('Confirm Password'), 'differentpassword')
@@ -239,7 +240,7 @@ describe('Authentication Flow', () => {
                 </TestWrapper>
             )
 
-            await user.type(screen.getByPlaceholderText('Full Name'), 'John Doe')
+            await user.type(screen.getByPlaceholderText('Full Name'), 'chakrawarthy')
             await user.type(screen.getByPlaceholderText('Email Address'), 'john@example.com')
             await user.type(screen.getByPlaceholderText('Password'), 'password123')
             await user.type(screen.getByPlaceholderText('Confirm Password'), 'password123')
@@ -261,7 +262,7 @@ describe('Authentication Flow', () => {
                 </TestWrapper>
             )
 
-            await user.type(screen.getByPlaceholderText('Full Name'), 'John Doe')
+            await user.type(screen.getByPlaceholderText('Full Name'), 'chakrawarthy')
             await user.type(screen.getByPlaceholderText('Email Address'), 'john@example.com')
             await user.type(screen.getByPlaceholderText('Password'), 'password123')      await user.type(screen.getByPlaceholderText('Confirm Password'), 'password123')
 

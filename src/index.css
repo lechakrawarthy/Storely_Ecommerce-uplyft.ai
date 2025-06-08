@@ -644,77 +644,71 @@
 /* Performance optimized animations */
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.5s ease-out;
+    animation: fadeIn 0.6s ease-out forwards;
   }
 
-  .animate-slide-up {
-    animation: slideUp 0.4s ease-out;
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
   }
 
-  .animate-bounce-subtle {
-    animation: bounceSubtle 0.6s ease-out;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+  .animate-blob {
+    animation: blob 7s infinite;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
+  .animation-delay-200 {
+    animation-delay: 0.2s;
   }
 
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes bounceSubtle {
-
-  0%,
-  20%,
-  53%,
-  80%,
-  100% {
-    transform: translate3d(0, 0, 0);
+  .animation-delay-2000 {
+    animation-delay: 2s;
   }
 
-  40%,
-  43% {
-    transform: translate3d(0, -8px, 0);
+  .animation-delay-4000 {
+    animation-delay: 4s;
   }
 
-  70% {
-    transform: translate3d(0, -4px, 0);
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
   }
 
-  90% {
-    transform: translate3d(0, -2px, 0);
-  }
-}
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
 
-/* Loading Spinner Animation */
-@keyframes spin-reverse {
-  from {
-    transform: rotate(360deg);
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  to {
-    transform: rotate(0deg);
-  }
-}
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
 
-.animate-reverse {
-  animation: spin-reverse 1s linear infinite;
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  /* Floating animation for background elements */
+  .glass-float {
+    animation: glassFloat 6s ease-in-out infinite;
+  }
 }

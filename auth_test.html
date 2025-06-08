@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authentication Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #10b981;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+      button:hover {
+        background-color: #059669;
+      }
+      .result {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 4px;
+        white-space: pre-wrap;
+        font-family: monospace;
+      }
+      .success {
+        background-color: #d1fae5;
+        border: 1px solid #10b981;
+        color: #065f46;
+      }
+      .error {
+        background-color: #fee2e2;
+        border: 1px solid #ef4444;
+        color: #991b1b;
+      }
+      .info {
+        background-color: #e0f2fe;
+        border: 1px solid #0284c7;
+        color: #0c4a6e;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Authentication API Test</h1>
+
+    <div class="container">
+      <h2>API Health Check</h2>
+      <button onclick="testHealth()">Test Health Endpoint</button>
+      <div id="healthResult" class="result"></div>
+    </div>
+
+    <div class="container">
+      <h2>User Signup Test</h2>
+      <div class="form-group">
+        <label for="signupName">Name:</label>
+        <input type="text" id="signupName" value="Test User" />
+      </div>
+      <div class="form-group">
+        <label for="signupEmail">Email:</label>
+        <input type="email" id="signupEmail" value="testuser@example.com" />
+      </div>
+      <div class="form-group">
+        <label for="signupPassword">Password:</label>
+        <input type="password" id="signupPassword" value="testpass123" />
+      </div>
+      <div class="form-group">
+        <label for="signupConfirmPassword">Confirm Password:</label>
+        <input type="password" id="signupConfirmPassword" value="testpass123" />
+      </div>
+      <button onclick="testSignup()">Test Signup</button>
+      <div id="signupResult" class="result"></div>
+    </div>
+
+    <div class="container">
+      <h2>User Login Test</h2>
+      <div class="form-group">
+        <label for="loginEmail">Email:</label>
+        <input type="email" id="loginEmail" value="testuser@example.com" />
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password:</label>
+        <input type="password" id="loginPassword" value="testpass123" />
+      </div>
+      <button onclick="testLogin()">Test Login</button>
+      <div id="loginResult" class="result"></div>
+    </div>
+
+    <div class="container">
+      <h2>Debug Information</h2>
+      <button onclick="getDebugInfo()">Get Debug Info</button>
+      <div id="debugResult" class="result"></div>
+    </div>
+
+    <script>
+      const API_BASE = "http://localhost:5000/api";
+
+      function displayResult(elementId, message, type = "info") {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.className = `result ${type}`;
+      }
+
+      async function testHealth() {
+        try {
+          displayResult("healthResult", "Testing health endpoint...", "info");
+          const response = await fetch(`${API_BASE}/health`);
+          const data = await response.json();
+
+          if (response.ok) {
+            displayResult(
+              "healthResult",
+              `✅ Health Check Passed\nStatus: ${
+                response.status
+              }\nResponse: ${JSON.stringify(data, null, 2)}`,
+              "success"
+            );
+          } else {
+            displayResult(
+              "healthResult",
+              `❌ Health Check Failed\nStatus: ${
+                response.status
+              }\nResponse: ${JSON.stringify(data, null, 2)}`,
+              "error"
+            );
+          }
+        } catch (error) {
+          displayResult(
+            "healthResult",
+            `❌ Health Check Error: ${error.message}`,
+            "error"
+          );
+        }
+      }
+
+      async function testSignup() {
+        try {
+          displayResult("signupResult", "Testing signup...", "info");
+
+          const signupData = {
+            type: "email",
+            name: document.getElementById("signupName").value,
+            email: document.getElementById("signupEmail").value,
+            password: document.getElementById("signupPassword").value,
+            confirmPassword: document.getElementById("signupConfirmPassword")
+              .value,
+          };
+
+          console.log("Sending signup data:", signupData);
+
+          const response = await fetch(`${API_BASE}/auth/signup`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(signupData),
+          });
+
+          const data = await response.json();
+          console.log("Signup response:", data);
+
+          if (response.ok) {
+            displayResult(
+              "signupResult",
+              `✅ Signup Successful\nStatus: ${
+                response.status
+              }\nResponse: ${JSON.stringify(data, null, 2)}`,
+              "success"
+            );
+          } else {
+            displayResult(
+              "signupResult",
+              `❌ Signup Failed\nStatus: ${
+                response.status
+              }\nResponse: ${JSON.stringify(data, null, 2)}`,
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Signup error:", error);
+          displayResult(
+            "signupResult",
+            `❌ Signup Error: ${error.message}`,
+            "error"
+          );
+        }
+      }
+
+      async function testLogin() {
+        try {
+          displayResult("loginResult", "Testing login...", "info");
+
+          const loginData = {
+            type: "email",
+            email: document.getElementById("loginEmail").value,
+            password: document.getElementById("loginPassword").value,
+          };
+
+          console.log("Sending login data:", loginData);
+
+          const response = await fetch(`${API_BASE}/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(loginData),
+          });
+
+          const data = await response.json();
+          console.log("Login response:", data);
+
+          if (response.ok) {
+            displayResult(
+              "loginResult",
+              `✅ Login Successful\nStatus: ${
+                response.status
+              }\nResponse: ${JSON.stringify(data, null, 2)}`,
+              "success"
+            );
+          } else {
+            displayResult(
+              "loginResult",
+              `❌ Login Failed\nStatus: ${
+                response.status
+              }\nResponse: ${JSON.stringify(data, null, 2)}`,
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+          displayResult(
+            "loginResult",
+            `❌ Login Error: ${error.message}`,
+            "error"
+          );
+        }
+      }
+
+      async function getDebugInfo() {
+        try {
+          displayResult("debugResult", "Getting debug info...", "info");
+          const response = await fetch(`${API_BASE}/debug`);
+          const data = await response.json();
+
+          if (response.ok) {
+            displayResult(
+              "debugResult",
+              `✅ Debug Info\nStatus: ${
+                response.status
+              }\nResponse: ${JSON.stringify(data, null, 2)}`,
+              "success"
+            );
+          } else {
+            displayResult(
+              "debugResult",
+              `❌ Debug Failed\nStatus: ${
+                response.status
+              }\nResponse: ${JSON.stringify(data, null, 2)}`,
+              "error"
+            );
+          }
+        } catch (error) {
+          displayResult(
+            "debugResult",
+            `❌ Debug Error: ${error.message}`,
+            "error"
+          );
+        }
+      }
+
+      // Auto-run health check on page load
+      window.onload = function () {
+        testHealth();
+      };
+    </script>
+  </body>
+</html>

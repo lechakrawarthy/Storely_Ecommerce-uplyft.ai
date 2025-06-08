@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -9,12 +10,17 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 import uuid
-from models import SessionLocal, Product, User, ChatSession, ChatMessage, init_db
+from models import SessionLocal, Product, User, ChatSession, ChatMessage, OTPSession, init_db
 import config
 import logging
 from functools import wraps
+import jwt
+import bcrypt
+import secrets
+import random
+import string
 
 # Load environment variables
 load_dotenv()
@@ -928,14 +934,30 @@ def search_products():
         db.close()
 
 
+# Debug Endpoints (for development only)
+
+@app.route('/api/debug/users', methods=['GET'])
+@handle_db_errors
+def debug_get_users():
+    """Debug endpoint to list all users (development only)"""
+    if not config.DEBUG:
+        return jsonify({'error': 'Debug endpoints are disabled in production'}), 403
+
+    db = SessionLocal()
+    try:
+        users = db.query(User).all()
+        return jsonify({
+            'count': len(users),
+            'users': [user.to_dict() for user in users]
+        }), 200
+    finally:
+        db.close()
+
+
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'timestamp': datetime.now().isoformat(),
-        'version': '1.0.0'
-    })
+    """Simple health check endpoint"""
+    return jsonify({'status': 'healthy', 'message': 'API is running'}), 200
 
 
 @app.route('/api/debug', methods=['GET'])
@@ -1000,106 +1022,550 @@ def register_user():
         db.close()
 
 
-@app.route('/api/auth/login', methods=['POST'])
+# Enhanced Authentication System
+
+# JWT Configuration
+JWT_SECRET_KEY = os.environ.get(
+    'JWT_SECRET_KEY', 'your-secret-key-change-in-production')
+JWT_EXPIRATION_DELTA = timedelta(days=7)
+
+
+def generate_jwt_token(user_id):
+    """Generate JWT token for user"""
+    payload = {
+        'user_id': user_id,
+        'exp': datetime.utcnow() + JWT_EXPIRATION_DELTA,
+        'iat': datetime.utcnow()
+    }
+    return jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
+
+
+def verify_jwt_token(token):
+    """Verify JWT token and return user_id"""
+    try:
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=['HS256'])
+        return payload['user_id']
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
+        return None
+
+
+def jwt_required(f):
+    """Decorator for routes that require authentication"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = None
+        auth_header = request.headers.get('Authorization')
+
+        if auth_header:
+            try:
+                token = auth_header.split(' ')[1]  # Bearer <token>
+            except IndexError:
+                return jsonify({'error': 'Invalid authorization header format'}), 401
+
+        if not token:
+            return jsonify({'error': 'Authorization token is required'}), 401
+
+        user_id = verify_jwt_token(token)
+        if not user_id:
+            return jsonify({'error': 'Invalid or expired token'}), 401
+
+        # Add user_id to request context
+        request.current_user_id = user_id
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+def hash_password(password):
+    """Hash password using bcrypt"""
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+
+def verify_password(password, hashed):
+    """Verify password against hash"""
+    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+
+
+def generate_otp():
+    """Generate 6-digit OTP"""
+    return ''.join(random.choices(string.digits, k=6))
+
+
+def send_otp_sms(phone, otp_code):
+    """Send OTP via SMS (mock implementation)"""
+    # In production, integrate with SMS service like Twilio, AWS SNS, etc.
+    logger.info(f"SMS OTP sent to {phone}: {otp_code}")
+    return True
+
+
+def send_otp_email(email, otp_code):
+    """Send OTP via email (mock implementation)"""
+    # In production, integrate with email service like SendGrid, SES, etc.
+    logger.info(f"Email OTP sent to {email}: {otp_code}")
+    return True
+
+# Authentication Endpoints
+
+
+@app.route('/api/auth/signup', methods=['POST'])
 @handle_db_errors
-def login_user():
-    """Login user"""
+def signup_user():
+    """Enhanced user signup with email/phone support"""
     db = SessionLocal()
     try:
         data = request.get_json()
-        username = data.get('username')
-        password = data.get('password')
 
-        if not username or not password:
-            return jsonify({'error': 'Username and password are required'}), 400
+        # Validate required fields
+        if not data.get('name'):
+            return jsonify({'error': 'Name is required'}), 400
 
-        # Find user
-        user = db.query(User).filter(User.username == username).first()
+        signup_type = data.get('type', 'email')  # 'email' or 'phone'
 
-        if not user or user.password_hash != password:  # In production, use proper password verification
-            return jsonify({'error': 'Invalid credentials'}), 401
+        if signup_type == 'email':
+            email = data.get('email')
+            password = data.get('password')
+            confirm_password = data.get('confirmPassword')
 
-        # Update last login
-        user.last_login = datetime.utcnow()
+            if not email or not password:
+                return jsonify({'error': 'Email and password are required'}), 400
+
+            if password != confirm_password:
+                return jsonify({'error': 'Passwords do not match'}), 400
+
+            if len(password) < 6:
+                return jsonify({'error': 'Password must be at least 6 characters'}), 400
+
+            # Check if email already exists
+            existing_user = db.query(User).filter(User.email == email).first()
+            if existing_user:
+                return jsonify({'error': 'Email already registered'}), 409
+
+            # Create new user
+            user_id = str(uuid.uuid4())
+            hashed_password = hash_password(password)
+
+            new_user = User(
+                id=user_id,
+                name=data['name'],
+                email=email,
+                password_hash=hashed_password,
+                is_email_verified=False
+            )
+
+            db.add(new_user)
+            db.commit()
+
+            # Generate JWT token
+            token = generate_jwt_token(user_id)
+
+            return jsonify({
+                'message': 'Account created successfully',
+                'token': token,
+                'user': new_user.to_dict(),
+                'requires_verification': True
+            }), 201
+
+        elif signup_type == 'phone':
+            phone = data.get('phone')
+            otp = data.get('otp')
+
+            if not phone:
+                return jsonify({'error': 'Phone number is required'}), 400
+
+            if not otp:
+                return jsonify({'error': 'OTP is required'}), 400
+
+            # Verify OTP
+            otp_session = db.query(OTPSession).filter(
+                OTPSession.phone == phone,
+                OTPSession.purpose == 'signup',
+                OTPSession.is_used == False
+            ).order_by(OTPSession.created_at.desc()).first()
+
+            if not otp_session:
+                return jsonify({'error': 'No OTP session found'}), 400
+
+            otp_session.attempts += 1
+            db.commit()
+
+            if not otp_session.is_valid(otp):
+                if otp_session.attempts >= otp_session.max_attempts:
+                    return jsonify({'error': 'Maximum OTP attempts exceeded'}), 429
+                elif otp_session.is_expired():
+                    return jsonify({'error': 'OTP has expired'}), 400
+                else:
+                    return jsonify({'error': 'Invalid OTP'}), 400
+
+            # Check if phone already exists
+            existing_user = db.query(User).filter(User.phone == phone).first()
+            if existing_user:
+                return jsonify({'error': 'Phone number already registered'}), 409
+
+            # Create new user
+            user_id = str(uuid.uuid4())
+            new_user = User(
+                id=user_id,
+                name=data['name'],
+                phone=phone,
+                is_phone_verified=True
+            )
+
+            db.add(new_user)
+
+            # Mark OTP as used
+            otp_session.is_used = True
+            otp_session.user_id = user_id
+
+            db.commit()
+
+            # Generate JWT token
+            token = generate_jwt_token(user_id)
+
+            return jsonify({
+                'message': 'Account created successfully',
+                'token': token,
+                'user': new_user.to_dict()
+            }), 201
+
+        else:
+            return jsonify({'error': 'Invalid signup type'}), 400
+
+    finally:
+        db.close()
+
+
+@app.route('/api/auth/send-otp', methods=['POST'])
+@handle_db_errors
+def send_otp():
+    """Send OTP for phone verification"""
+    db = SessionLocal()
+    try:
+        data = request.get_json()
+        phone = data.get('phone')
+        # 'signup', 'login', 'verification'
+        purpose = data.get('purpose', 'signup')
+
+        if not phone:
+            return jsonify({'error': 'Phone number is required'}), 400
+
+        # Validate phone format (basic validation)
+        if not phone.replace('+', '').replace('-', '').replace(' ', '').isdigit():
+            return jsonify({'error': 'Invalid phone number format'}), 400
+
+        # Check rate limiting (max 3 OTPs per hour per phone)
+        one_hour_ago = datetime.utcnow() - timedelta(hours=1)
+        recent_otps = db.query(OTPSession).filter(
+            OTPSession.phone == phone,
+            OTPSession.created_at >= one_hour_ago
+        ).count()
+
+        if recent_otps >= 3:
+            return jsonify({'error': 'Too many OTP requests. Please try again later.'}), 429
+
+        # Generate and store OTP
+        otp_code = generate_otp()
+        otp_session_id = str(uuid.uuid4())
+        expires_at = datetime.utcnow() + timedelta(minutes=10)  # OTP expires in 10 minutes
+
+        otp_session = OTPSession(
+            id=otp_session_id,
+            phone=phone,
+            otp_code=otp_code,
+            purpose=purpose,
+            expires_at=expires_at
+        )
+
+        db.add(otp_session)
         db.commit()
 
-        # Get user preferences
-        preferences = {}
-        if user.preferences_json:
-            try:
-                preferences = json.loads(user.preferences_json)
-            except json.JSONDecodeError:
-                preferences = {}
+        # Send OTP (mock implementation)
+        send_otp_sms(phone, otp_code)
 
         return jsonify({
-            'message': 'Login successful',
-            'user_id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'preferences': preferences
+            'message': 'OTP sent successfully',
+            'expires_in': 600  # 10 minutes in seconds
         }), 200
 
     finally:
         db.close()
 
 
-@app.route('/api/auth/user/<user_id>', methods=['GET'])
+@app.route('/api/auth/login', methods=['POST'])
 @handle_db_errors
-def get_user_profile(user_id):
-    """Get user profile"""
+def login_user():
+    """Enhanced login with email/phone + password/OTP support"""
     db = SessionLocal()
     try:
-        user = db.query(User).filter(User.id == user_id).first()
+        data = request.get_json()
+        login_type = data.get('type', 'email')  # 'email' or 'phone'
 
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
+        if login_type == 'email':
+            email = data.get('email')
+            password = data.get('password')
 
-        preferences = {}
-        if user.preferences_json:
-            try:
-                preferences = json.loads(user.preferences_json)
-            except json.JSONDecodeError:
-                preferences = {}
+            if not email or not password:
+                return jsonify({'error': 'Email and password are required'}), 400
 
-        return jsonify({
-            'user_id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'preferences': preferences,
-            'created_at': user.created_at.isoformat(),
-            'last_login': user.last_login.isoformat() if user.last_login else None
-        })
+            # Find user by email
+            user = db.query(User).filter(User.email == email).first()
+
+            if not user or not user.password_hash or not verify_password(password, user.password_hash):
+                return jsonify({'error': 'Invalid email or password'}), 401
+
+            if not user.is_active:
+                return jsonify({'error': 'Account is deactivated'}), 401
+
+            # Update last login
+            user.last_login = datetime.utcnow()
+            db.commit()
+
+            # Generate JWT token
+            token = generate_jwt_token(user.id)
+
+            return jsonify({
+                'message': 'Login successful',
+                'token': token,
+                'user': user.to_dict()
+            }), 200
+
+        elif login_type == 'phone':
+            phone = data.get('phone')
+            otp = data.get('otp')
+
+            if not phone or not otp:
+                return jsonify({'error': 'Phone number and OTP are required'}), 400
+
+            # Verify OTP
+            otp_session = db.query(OTPSession).filter(
+                OTPSession.phone == phone,
+                OTPSession.purpose == 'login',
+                OTPSession.is_used == False
+            ).order_by(OTPSession.created_at.desc()).first()
+
+            if not otp_session:
+                return jsonify({'error': 'No OTP session found'}), 400
+
+            otp_session.attempts += 1
+            db.commit()
+
+            if not otp_session.is_valid(otp):
+                if otp_session.attempts >= otp_session.max_attempts:
+                    return jsonify({'error': 'Maximum OTP attempts exceeded'}), 429
+                elif otp_session.is_expired():
+                    return jsonify({'error': 'OTP has expired'}), 400
+                else:
+                    return jsonify({'error': 'Invalid OTP'}), 400
+
+            # Find user by phone
+            user = db.query(User).filter(User.phone == phone).first()
+
+            if not user:
+                return jsonify({'error': 'User not found with this phone number'}), 404
+
+            if not user.is_active:
+                return jsonify({'error': 'Account is deactivated'}), 401
+
+            # Mark OTP as used
+            otp_session.is_used = True
+
+            # Update last login
+            user.last_login = datetime.utcnow()
+            db.commit()
+
+            # Generate JWT token
+            token = generate_jwt_token(user.id)
+
+            return jsonify({
+                'message': 'Login successful',
+                'token': token,
+                'user': user.to_dict()
+            }), 200
+
+        else:
+            return jsonify({'error': 'Invalid login type'}), 400
 
     finally:
         db.close()
 
 
-@app.route('/api/auth/user/<user_id>/preferences', methods=['PUT'])
+@app.route('/api/auth/verify-phone', methods=['POST'])
+@jwt_required
 @handle_db_errors
-def update_user_preferences(user_id):
-    """Update user preferences"""
+def verify_phone():
+    """Verify phone number for existing user"""
     db = SessionLocal()
     try:
         data = request.get_json()
-        preferences = data.get('preferences', {})
+        phone = data.get('phone')
+        otp = data.get('otp')
 
+        if not phone or not otp:
+            return jsonify({'error': 'Phone number and OTP are required'}), 400
+
+        user_id = request.current_user_id
         user = db.query(User).filter(User.id == user_id).first()
 
         if not user:
             return jsonify({'error': 'User not found'}), 404
 
-        # Update preferences
-        user.preferences_json = json.dumps(preferences)
+        # Verify OTP
+        otp_session = db.query(OTPSession).filter(
+            OTPSession.phone == phone,
+            OTPSession.purpose == 'verification',
+            OTPSession.is_used == False
+        ).order_by(OTPSession.created_at.desc()).first()
+
+        if not otp_session:
+            return jsonify({'error': 'No OTP session found'}), 400
+
+        otp_session.attempts += 1
+        db.commit()
+
+        if not otp_session.is_valid(otp):
+            if otp_session.attempts >= otp_session.max_attempts:
+                return jsonify({'error': 'Maximum OTP attempts exceeded'}), 429
+            elif otp_session.is_expired():
+                return jsonify({'error': 'OTP has expired'}), 400
+            else:
+                return jsonify({'error': 'Invalid OTP'}), 400
+
+        # Update user phone and mark as verified
+        user.phone = phone
+        user.is_phone_verified = True
+
+        # Mark OTP as used
+        otp_session.is_used = True
+        otp_session.user_id = user_id
+
+        db.commit()
+
+        return jsonify({
+            'message': 'Phone number verified successfully',
+            'user': user.to_dict()
+        }), 200
+
+    finally:
+        db.close()
+
+
+@app.route('/api/auth/profile', methods=['GET'])
+@jwt_required
+@handle_db_errors
+def get_user_profile():
+    """Get current user profile"""
+    db = SessionLocal()
+    try:
+        user_id = request.current_user_id
+        user = db.query(User).filter(User.id == user_id).first()
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        return jsonify({'user': user.to_dict()}), 200
+
+    finally:
+        db.close()
+
+
+@app.route('/api/auth/profile', methods=['PUT'])
+@jwt_required
+@handle_db_errors
+def update_user_profile():
+    """Update user profile"""
+    db = SessionLocal()
+    try:
+        user_id = request.current_user_id
+        user = db.query(User).filter(User.id == user_id).first()
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        data = request.get_json()
+
+        # Update allowed fields
+        if 'name' in data:
+            user.name = data['name']
+
+        if 'avatar' in data:
+            user.avatar = data['avatar']
+
         user.updated_at = datetime.utcnow()
         db.commit()
 
         return jsonify({
-            'message': 'Preferences updated successfully',
-            'preferences': preferences
-        })
+            'message': 'Profile updated successfully',
+            'user': user.to_dict()
+        }), 200
 
     finally:
         db.close()
+
+
+@app.route('/api/auth/change-password', methods=['POST'])
+@jwt_required
+@handle_db_errors
+def change_password():
+    """Change user password"""
+    db = SessionLocal()
+    try:
+        user_id = request.current_user_id
+        user = db.query(User).filter(User.id == user_id).first()
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        data = request.get_json()
+        current_password = data.get('currentPassword')
+        new_password = data.get('newPassword')
+        confirm_password = data.get('confirmPassword')
+
+        if not current_password or not new_password or not confirm_password:
+            return jsonify({'error': 'All password fields are required'}), 400
+
+        if new_password != confirm_password:
+            return jsonify({'error': 'New passwords do not match'}), 400
+
+        if len(new_password) < 6:
+            return jsonify({'error': 'New password must be at least 6 characters'}), 400
+
+        # verify current password
+        if not user.password_hash or not verify_password(current_password, user.password_hash):
+            return jsonify({'error': 'Current password is incorrect'}), 401
+
+        # Update password
+        user.password_hash = hash_password(new_password)
+        user.updated_at = datetime.utcnow()
+        db.commit()
+
+        return jsonify({'message': 'Password changed successfully'}), 200
+
+    finally:
+        db.close()
+
+
+@app.route('/api/auth/logout', methods=['POST'])
+@jwt_required
+@handle_db_errors
+def logout_user():
+    """User logout (token invalidation would be handled client-side)"""
+    return jsonify({'message': 'Logout successful'}), 200
+
+
+@app.route('/api/auth/refresh-token', methods=['POST'])
+@jwt_required
+@handle_db_errors
+def refresh_token():
+    """Refresh JWT token"""
+    user_id = request.current_user_id
+    new_token = generate_jwt_token(user_id)
+
+    return jsonify({
+        'message': 'Token refreshed successfully',
+        'token': new_token
+    }), 200
+
 
 # Analytics Endpoints
 

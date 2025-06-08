@@ -69,7 +69,7 @@ vi.mock('react-router-dom', async () => {
     return {
         ...actual,
         useNavigate: () => mockNavigate,
-        Link: ({ children, to, ...props }: { children: React.ReactNode; to: string; [key: string]: unknown }) => <a href={to} {...props}>{children}</a>,
+        Link: ({ children, to, ...props }: { children: React.ReactNode; to: string;[key: string]: unknown }) => <a href={to} {...props}>{children}</a>,
     }
 })
 
@@ -216,7 +216,7 @@ describe('Checkout', () => {
         )
 
         // Fill shipping information
-        await user.type(screen.getByPlaceholderText('Enter your full name'), 'John Doe')
+        await user.type(screen.getByPlaceholderText('Enter your full name'), 'chakrawarthy')
         await user.type(screen.getByPlaceholderText('Enter your email'), 'john@example.com')
         await user.type(screen.getByPlaceholderText('Enter your phone number'), '1234567890')
         await user.type(screen.getByPlaceholderText('Enter your full address'), '123 Main St')
@@ -243,7 +243,7 @@ describe('Checkout', () => {
         )
 
         // First, complete shipping step
-        await user.type(screen.getByPlaceholderText('Enter your full name'), 'John Doe')
+        await user.type(screen.getByPlaceholderText('Enter your full name'), 'chakrawarthy')
         await user.type(screen.getByPlaceholderText('Enter your email'), 'john@example.com')
         await user.type(screen.getByPlaceholderText('Enter your phone number'), '1234567890')
         await user.type(screen.getByPlaceholderText('Enter your full address'), '123 Main St')
@@ -274,7 +274,7 @@ describe('Checkout', () => {
         )
 
         // Navigate to payment step first
-        await user.type(screen.getByPlaceholderText('Enter your full name'), 'John Doe')
+        await user.type(screen.getByPlaceholderText('Enter your full name'), 'chakrawarthy')
         await user.type(screen.getByPlaceholderText('Enter your email'), 'john@example.com')
         await user.type(screen.getByPlaceholderText('Enter your phone number'), '1234567890')
         await user.type(screen.getByPlaceholderText('Enter your full address'), '123 Main St')
@@ -305,7 +305,7 @@ describe('Checkout', () => {
         )
 
         // Step 1: Shipping
-        await user.type(screen.getByPlaceholderText('Enter your full name'), 'John Doe')
+        await user.type(screen.getByPlaceholderText('Enter your full name'), 'chakrawarthy')
         await user.type(screen.getByPlaceholderText('Enter your email'), 'john@example.com')
         await user.type(screen.getByPlaceholderText('Enter your phone number'), '1234567890')
         await user.type(screen.getByPlaceholderText('Enter your full address'), '123 Main St')
@@ -316,7 +316,7 @@ describe('Checkout', () => {
 
         // Step 2: Payment
         await waitFor(async () => {
-            await user.type(screen.getByPlaceholderText('Enter name as on card'), 'John Doe')
+            await user.type(screen.getByPlaceholderText('Enter name as on card'), 'chakrawarthy')
             await user.type(screen.getByPlaceholderText('1234 5678 9012 3456'), '1234567890123456')
             await user.type(screen.getByPlaceholderText('MM/YY'), '1225')
             await user.type(screen.getByPlaceholderText('123'), '123')
@@ -349,7 +349,7 @@ describe('Checkout', () => {
         )
 
         // Complete first step
-        await user.type(screen.getByPlaceholderText('Enter your full name'), 'John Doe')
+        await user.type(screen.getByPlaceholderText('Enter your full name'), 'chakrawarthy')
         await user.type(screen.getByPlaceholderText('Enter your email'), 'john@example.com')
         await user.type(screen.getByPlaceholderText('Enter your phone number'), '1234567890')
         await user.type(screen.getByPlaceholderText('Enter your full address'), '123 Main St')
@@ -363,7 +363,7 @@ describe('Checkout', () => {
             const previousButton = screen.getByText('Previous')
             user.click(previousButton)
         })
-        
+
         await waitFor(() => {
             expect(screen.getByText('Shipping Information')).toBeInTheDocument()
         })

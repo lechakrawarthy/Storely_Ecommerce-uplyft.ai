@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Search, Heart, ShoppingBag, User, Home, Clock, TrendingUp } from '../utils/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { useSearch } from '../contexts/SearchContext';
 
 interface MinimizedNavigationProps {

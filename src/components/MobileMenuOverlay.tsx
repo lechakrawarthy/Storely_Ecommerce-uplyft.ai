@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { X, Search, Heart, User, LogOut, Home, ShoppingBag, Settings, HelpCircle, Star, Clock, BarChart3 } from '../utils/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { useCart } from '../contexts/CartContext';
 
 interface MobileMenuOverlayProps {

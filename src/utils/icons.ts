@@ -25,6 +25,8 @@ export { default as User } from 'lucide-react/dist/esm/icons/user';
 export { default as Mail } from 'lucide-react/dist/esm/icons/mail';
 export { default as Phone } from 'lucide-react/dist/esm/icons/phone';
 export { default as MapPin } from 'lucide-react/dist/esm/icons/map-pin';
+export { default as Lock } from 'lucide-react/dist/esm/icons/lock';
+export { default as EyeOff } from 'lucide-react/dist/esm/icons/eye-off';
 
 // UI and system icons
 export { default as Search } from 'lucide-react/dist/esm/icons/search';

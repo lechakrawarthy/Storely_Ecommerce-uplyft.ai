@@ -3,7 +3,7 @@ import { Heart, Trash2, ShoppingCart, ArrowLeft, Grid, List, Filter } from '../u
 import { Link, useNavigate } from 'react-router-dom';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useCart } from '../contexts/CartContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { allProducts } from '../data/products';
 import OptimizedImage from '../components/OptimizedImage';
 import { Button } from '../components/ui/button';

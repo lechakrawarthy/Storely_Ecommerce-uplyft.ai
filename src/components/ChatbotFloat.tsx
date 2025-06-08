@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Minimize2, Maximize2, ShoppingCart, Bot, Sparkles, Zap, Package, Search, ArrowRight, Loader, RefreshCw } from '../utils/icons';
 import { useCart } from '../contexts/CartContext';
 import type { Product } from './BooksSection';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import axios from 'axios';
 import { useToast } from '../hooks/use-toast';
 

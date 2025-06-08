@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Database Admin</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9fafb;
+      }
+      h1 {
+        color: #111827;
+        border-bottom: 2px solid #10b981;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+      .card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .stats {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+      }
+      .stat-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        flex: 1;
+        min-width: 200px;
+        border-left: 4px solid #10b981;
+      }
+      .stat-title {
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        color: #6b7280;
+        margin: 0;
+      }
+      .stat-value {
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: #111827;
+        margin: 5px 0;
+      }
+      .stat-desc {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin: 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      th {
+        background-color: #f3f4f6;
+        font-weight: 600;
+        color: #374151;
+        position: sticky;
+        top: 0;
+      }
+      tbody tr:hover {
+        background-color: #f9fafb;
+      }
+      .text-green {
+        color: #10b981;
+      }
+      .text-red {
+        color: #ef4444;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+      .badge-green {
+        background-color: #d1fae5;
+        color: #065f46;
+      }
+      .badge-red {
+        background-color: #fee2e2;
+        color: #b91c1c;
+      }
+      .badge-blue {
+        background-color: #dbeafe;
+        color: #1e40af;
+      }
+      .badge-yellow {
+        background-color: #fef3c7;
+        color: #92400e;
+      }
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0;
+      }
+      button,
+      .button {
+        background-color: #10b981;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+      }
+      button:hover,
+      .button:hover {
+        background-color: #059669;
+      }
+      .button-outline {
+        background-color: transparent;
+        color: #10b981;
+        border: 1px solid #10b981;
+      }
+      .button-outline:hover {
+        background-color: #f0fdf4;
+      }
+      .refresh {
+        background-color: transparent;
+        color: #4b5563;
+        border: 1px solid #d1d5db;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .refresh:hover {
+        background-color: #f9fafb;
+      }
+      .refresh svg {
+        width: 16px;
+        height: 16px;
+      }
+      .search-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .search-bar input {
+        flex-grow: 1;
+        padding: 8px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 0.875rem;
+      }
+      .loading {
+        display: flex;
+        justify-content: center;
+        padding: 40px 0;
+      }
+      .spinner {
+        border: 3px solid #f3f4f6;
+        border-top: 3px solid #10b981;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .error {
+        background-color: #fee2e2;
+        color: #b91c1c;
+        padding: 12px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>User Database Admin</h1>
+
+    <div class="stats">
+      <div class="stat-card">
+        <p class="stat-title">Total Users</p>
+        <p class="stat-value" id="total-users">-</p>
+        <p class="stat-desc">Registered accounts</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-title">Active Users</p>
+        <p class="stat-value" id="active-users">-</p>
+        <p class="stat-desc">Users with active status</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-title">Last Registration</p>
+        <p class="stat-value" id="last-registration">-</p>
+        <p class="stat-desc">Most recent signup</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="actions">
+        <h2>User Accounts</h2>
+        <button class="refresh" onclick="fetchUsers()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+            />
+          </svg>
+          Refresh
+        </button>
+      </div>
+
+      <div class="search-bar">
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search by name or email..."
+          oninput="filterUsers()"
+        />
+      </div>
+
+      <div id="error-container" class="error" style="display: none"></div>
+
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+      </div>
+
+      <div id="users-table-container" style="display: none">
+        <table id="users-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>User ID</th>
+              <th>Created</th>
+              <th>Last Login</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <!-- User data will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a href="http://localhost:8080/signup" target="_blank" class="button"
+        >Create New Account</a
+      >
+      <a
+        href="http://localhost:5000/api/debug/users"
+        target="_blank"
+        class="button button-outline"
+        >View Raw API Data</a
+      >
+    </div>
+
+    <script>
+      // Format date helper function
+      function formatDate(dateString) {
+        if (!dateString) return "Never";
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+
+        return date.toLocaleString();
+      }
+
+      // Calculate time ago
+      function timeAgo(dateString) {
+        if (!dateString) return "N/A";
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+
+        const now = new Date();
+        const diffMs = now - date;
+        const diffSec = Math.floor(diffMs / 1000);
+
+        if (diffSec < 60) return `${diffSec} sec ago`;
+        const diffMin = Math.floor(diffSec / 60);
+        if (diffMin < 60) return `${diffMin} min ago`;
+        const diffHour = Math.floor(diffMin / 60);
+        if (diffHour < 24) return `${diffHour} hr ago`;
+        const diffDay = Math.floor(diffHour / 24);
+        if (diffDay < 30) return `${diffDay} days ago`;
+        const diffMonth = Math.floor(diffDay / 30);
+        if (diffMonth < 12) return `${diffMonth} months ago`;
+        const diffYear = Math.floor(diffMonth / 12);
+        return `${diffYear} years ago`;
+      }
+
+      // Global storage for users data
+      let usersData = [];
+
+      // Fetch users from the API
+      function fetchUsers() {
+        const loadingElement = document.getElementById("loading");
+        const tableContainer = document.getElementById("users-table-container");
+        const errorContainer = document.getElementById("error-container");
+
+        loadingElement.style.display = "flex";
+        tableContainer.style.display = "none";
+        errorContainer.style.display = "none";
+
+        fetch("http://localhost:5000/api/debug/users")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`API returned status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            usersData = data.users;
+            updateStats(usersData);
+            renderTable(usersData);
+
+            loadingElement.style.display = "none";
+            tableContainer.style.display = "block";
+          })
+          .catch((error) => {
+            console.error("Error fetching users:", error);
+            loadingElement.style.display = "none";
+            errorContainer.textContent = `Failed to load users: ${error.message}`;
+            errorContainer.style.display = "block";
+          });
+      }
+
+      // Update statistics
+      function updateStats(users) {
+        document.getElementById("total-users").textContent = users.length;
+
+        const activeUsers = users.filter((user) => user.is_active).length;
+        document.getElementById("active-users").textContent = activeUsers;
+
+        // Find the most recent registration
+        if (users.length > 0) {
+          const sortedUsers = [...users].sort((a, b) => {
+            return new Date(b.created_at) - new Date(a.created_at);
+          });
+          document.getElementById("last-registration").textContent = timeAgo(
+            sortedUsers[0].created_at
+          );
+        }
+      }
+
+      // Render the users table
+      function renderTable(users) {
+        const tableBody = document.getElementById("users-table-body");
+        tableBody.innerHTML = "";
+
+        users.forEach((user) => {
+          const row = document.createElement("tr");
+
+          // Name column
+          const nameCell = document.createElement("td");
+          nameCell.textContent = user.name;
+          row.appendChild(nameCell);
+
+          // Email column
+          const emailCell = document.createElement("td");
+          emailCell.textContent = user.email;
+          row.appendChild(emailCell);
+
+          // User ID column
+          const idCell = document.createElement("td");
+          const shortId = user.id.substring(0, 8) + "...";
+          idCell.textContent = shortId;
+          idCell.title = user.id;
+          row.appendChild(idCell);
+
+          // Created column
+          const createdCell = document.createElement("td");
+          createdCell.textContent = timeAgo(user.created_at);
+          createdCell.title = formatDate(user.created_at);
+          row.appendChild(createdCell);
+
+          // Last Login column
+          const lastLoginCell = document.createElement("td");
+          lastLoginCell.textContent = user.last_login
+            ? timeAgo(user.last_login)
+            : "Never";
+          if (user.last_login) {
+            lastLoginCell.title = formatDate(user.last_login);
+          }
+          row.appendChild(lastLoginCell);
+
+          // Status column
+          const statusCell = document.createElement("td");
+          const badge = document.createElement("span");
+          badge.classList.add("badge");
+
+          if (user.is_active) {
+            badge.classList.add("badge-green");
+            badge.textContent = "Active";
+          } else {
+            badge.classList.add("badge-red");
+            badge.textContent = "Inactive";
+          }
+
+          statusCell.appendChild(badge);
+          row.appendChild(statusCell);
+
+          tableBody.appendChild(row);
+        });
+      }
+
+      // Filter users based on search input
+      function filterUsers() {
+        const searchTerm = document
+          .getElementById("search-input")
+          .value.toLowerCase();
+
+        if (!searchTerm) {
+          renderTable(usersData);
+          return;
+        }
+
+        const filteredUsers = usersData.filter((user) => {
+          return (
+            user.name.toLowerCase().includes(searchTerm) ||
+            user.email.toLowerCase().includes(searchTerm) ||
+            (user.id && user.id.toLowerCase().includes(searchTerm))
+          );
+        });
+
+        renderTable(filteredUsers);
+      }
+
+      // Initial load
+      window.onload = fetchUsers;
+    </script>
+  </body>
+</html>
