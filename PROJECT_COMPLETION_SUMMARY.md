@@ -1,4 +1,4 @@
-# 🚀 Enhanced E-commerce Sales Chatbot - Internship Project Portfolio
+#  Enhanced E-commerce Sales 
 
 **Internship Application For**: Uplyft.ai  
 **Development Timeline**: 5 Days (Rapid Development Sprint)  
