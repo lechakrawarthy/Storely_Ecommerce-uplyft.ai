@@ -1,8 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 /* Premium Glass Effect Utilities */
 @layer utilities {
@@ -702,4 +702,19 @@
   90% {
     transform: translate3d(0, -2px, 0);
   }
+}
+
+/* Loading Spinner Animation */
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-reverse {
+  animation: spin-reverse 1s linear infinite;
 }

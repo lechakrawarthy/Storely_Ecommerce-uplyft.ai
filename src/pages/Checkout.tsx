@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useIsMobile } from '../hooks/use-mobile';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
+import hapticFeedback from '../utils/hapticFeedback';
+import MobileLoadingAnimations from '../components/MobileLoadingAnimations';
 import {
     ShoppingBag,
     MapPin,
@@ -42,6 +45,7 @@ const Checkout = () => {
     const { items, total, clearCart } = useCart();
     const { user } = useAuth();
     const navigate = useNavigate();
+    const isMobile = useIsMobile();
 
     const [currentStep, setCurrentStep] = useState(1);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -114,18 +118,15 @@ const Checkout = () => {
 
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
-    };
-
-    const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    }; const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setShippingAddress(prev => ({ ...prev, [name]: value }));
 
         if (validationErrors[name]) {
             setValidationErrors(prev => ({ ...prev, [name]: '' }));
+            if (isMobile) hapticFeedback.light();
         }
-    };
-
-    const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    }; const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         let formattedValue = value;
 
@@ -148,25 +149,28 @@ const Checkout = () => {
 
         if (validationErrors[name]) {
             setValidationErrors(prev => ({ ...prev, [name]: '' }));
+            if (isMobile) hapticFeedback.light();
         }
-    };
-
-    const nextStep = () => {
+    }; const nextStep = () => {
         if (currentStep === 1 && validateShipping()) {
+            if (isMobile) hapticFeedback.success();
             setCurrentStep(2);
         } else if (currentStep === 2 && validatePayment()) {
+            if (isMobile) hapticFeedback.success();
             setCurrentStep(3);
+        } else {
+            if (isMobile) hapticFeedback.error();
         }
     };
 
     const prevStep = () => {
         if (currentStep > 1) {
+            if (isMobile) hapticFeedback.light();
             setCurrentStep(currentStep - 1);
         }
-    };
-
-    const placeOrder = async () => {
+    }; const placeOrder = async () => {
         setIsProcessing(true);
+        if (isMobile) hapticFeedback.light();
 
         try {
             // Simulate API call
@@ -176,7 +180,9 @@ const Checkout = () => {
             clearCart();
             setOrderComplete(true);
             setCurrentStep(4);
+            if (isMobile) hapticFeedback.success();
         } catch (error) {
+            if (isMobile) hapticFeedback.error();
             console.error('Order failed:', error);
         } finally {
             setIsProcessing(false);
@@ -232,23 +238,25 @@ const Checkout = () => {
                             const isCurrent = currentStep === step.number;
 
                             return (
-                                <React.Fragment key={step.number}>
-                                    <div className="flex flex-col items-center">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-colors ${isActive
-                                            ? 'bg-sage-600 border-sage-600 text-white'
-                                            : 'border-gray-300 text-gray-400'
-                                            }`}>
-                                            <Icon className="w-5 h-5" />
-                                        </div>
-                                        <span className={`text-sm mt-2 font-medium ${isCurrent ? 'text-sage-600' : isActive ? 'text-gray-800' : 'text-gray-400'
-                                            }`}>
-                                            {step.title}
-                                        </span>
+                                <React.Fragment key={step.number}>                                    <div className="flex flex-col items-center">
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-colors ${isActive
+                                        ? 'bg-sage-600 border-sage-600 text-white'
+                                        : 'border-gray-300 text-gray-400'
+                                        }`}>
+                                        <Icon className="w-5 h-5" />
                                     </div>
-                                    {index < steps.length - 1 && (
-                                        <div className={`flex-1 h-0.5 mx-4 ${currentStep > step.number ? 'bg-sage-600' : 'bg-gray-200'
-                                            }`} />
-                                    )}
+                                    <span className={`text-sm mt-2 font-medium ${isCurrent
+                                        ? 'text-sage-600'
+                                        : isActive
+                                            ? 'text-gray-800'
+                                            : 'text-gray-400'
+                                        }`}>
+                                        {step.title}
+                                    </span>
+                                </div>                                    {index < steps.length - 1 && (
+                                    <div className={`flex-1 h-0.5 mx-4 ${currentStep > step.number ? 'bg-sage-600' : 'bg-gray-200'
+                                        }`} />
+                                )}
                                 </React.Fragment>
                             );
                         })}
@@ -520,13 +528,16 @@ const Checkout = () => {
                                     </Button>
                                 ) : (
                                     <Button
-                                        onClick={placeOrder}
-                                        disabled={isProcessing}
+                                        onClick={placeOrder} disabled={isProcessing}
                                         className="flex items-center"
                                     >
                                         {isProcessing ? (
                                             <>
-                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                {isMobile ? (
+                                                    <MobileLoadingAnimations type="spinner" size="sm" className="mr-2" />
+                                                ) : (
+                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                )}
                                                 Processing...
                                             </>
                                         ) : (

@@ -2,6 +2,7 @@ import React from 'react';
 import { X, Plus, Minus, ShoppingCart, Trash2 } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { Link } from 'react-router-dom';
+import OptimizedImage from './OptimizedImage';
 
 const Cart = () => {
     const { items, total, itemCount, isOpen, removeItem, updateQuantity, setCartOpen, clearCart } = useCart();
@@ -51,43 +52,42 @@ const Cart = () => {
                         </div>
                     ) : (
                         items.map((item) => (
-                            <div key={item.id} className="glass-subtle rounded-xl p-4 border border-white/20">
-                                <div className="flex items-start gap-4">
-                                    <img
-                                        src={item.image}
-                                        alt={item.title}
-                                        className="w-16 h-16 object-cover rounded-lg shadow-md"
-                                    />
-                                    <div className="flex-1 min-w-0">
-                                        <h4 className="font-semibold text-gray-800 mb-1 truncate">{item.title}</h4>
-                                        <p className="text-sm text-gray-600 mb-2">{item.category} • {item.color}</p>
-                                        <div className="flex items-center justify-between">
-                                            <span className="font-bold text-lime-600">₹{item.price}</span>
-                                            <div className="flex items-center gap-2">
-                                                <button
-                                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                    className="w-8 h-8 flex items-center justify-center glass-subtle rounded-full hover:glass-strong transition-all border border-white/20"
-                                                >
-                                                    <Minus className="w-4 h-4 text-gray-600" />
-                                                </button>
-                                                <span className="w-8 text-center font-semibold text-gray-800">{item.quantity}</span>
-                                                <button
-                                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                    className="w-8 h-8 flex items-center justify-center glass-subtle rounded-full hover:glass-strong transition-all border border-white/20"
-                                                >
-                                                    <Plus className="w-4 h-4 text-gray-600" />
-                                                </button>
-                                            </div>
+                            <div key={item.id} className="glass-subtle rounded-xl p-4 border border-white/20">                                <div className="flex items-start gap-4">
+                                <OptimizedImage
+                                    src={item.image}
+                                    alt={item.title}
+                                    className="w-16 h-16 object-cover rounded-lg shadow-md"
+                                />
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="font-semibold text-gray-800 mb-1 truncate">{item.title}</h4>
+                                    <p className="text-sm text-gray-600 mb-2">{item.category} • {item.color}</p>
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-bold text-lime-600">₹{item.price}</span>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                className="w-8 h-8 flex items-center justify-center glass-subtle rounded-full hover:glass-strong transition-all border border-white/20"
+                                            >
+                                                <Minus className="w-4 h-4 text-gray-600" />
+                                            </button>
+                                            <span className="w-8 text-center font-semibold text-gray-800">{item.quantity}</span>
+                                            <button
+                                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                className="w-8 h-8 flex items-center justify-center glass-subtle rounded-full hover:glass-strong transition-all border border-white/20"
+                                            >
+                                                <Plus className="w-4 h-4 text-gray-600" />
+                                            </button>
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={() => removeItem(item.id)}
-                                        className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                                        title="Remove item"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
                                 </div>
+                                <button
+                                    onClick={() => removeItem(item.id)}
+                                    className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                    title="Remove item"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+                            </div>
                             </div>
                         ))
                     )}

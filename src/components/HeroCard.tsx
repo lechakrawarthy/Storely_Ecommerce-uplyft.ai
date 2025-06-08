@@ -5,33 +5,31 @@ const HeroCard = () => {
     const handleViewAll = () => {
         const el = document.getElementById("products");
         if (el) el.scrollIntoView({ behavior: "smooth" });
-    };
-
-    return (
-        <div className="w-full max-w-7xl mx-auto p-6">
-            {/* Main Bento Grid */}
-            <div className="grid grid-cols-12 grid-rows-8 gap-4 h-[600px]">
+    }; return (
+        <div className="w-full max-w-7xl mx-auto p-4 lg:p-6">
+            {/* Main Bento Grid - Responsive Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:grid-rows-8 lg:h-[600px]">
                 {/* Main Hero Card - Large Left Section */}
-                <div className="col-span-8 row-span-8 glass-card rounded-3xl p-8 flex items-center justify-between relative overflow-hidden shadow-lg">
+                <div className="lg:col-span-8 lg:row-span-8 glass-card rounded-3xl p-6 lg:p-8 flex flex-col lg:flex-row items-center justify-between relative overflow-hidden shadow-lg">
                     {/* Left Content */}
-                    <div className="flex-1 z-10">
-                        <div className="flex items-center gap-2 mb-4">
+                    <div className="flex-1 z-10 text-center lg:text-left mb-6 lg:mb-0">
+                        <div className="flex items-center justify-center lg:justify-start gap-2 mb-4">
                             <span className="text-sm text-gray-500">🛍️ Shop with Confidence</span>
                         </div>
-                        <h1 className="text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                             Storely<br />
                             Experience.
                         </h1>
-                        <div className="flex items-center gap-4 mb-6">
-                            <span className="text-4xl font-light text-gray-300">01</span>
-                            <div className="flex-1">
-                                <div className="text-lg font-semibold text-gray-800 mb-1">Premium Quality</div>
-                                <div className="text-sm text-gray-500">Discover amazing products from top brands<br />with guaranteed quality and fast delivery!</div>
+                        <div className="flex flex-col lg:flex-row items-center gap-4 mb-6">
+                            <span className="text-2xl lg:text-4xl font-light text-gray-300">01</span>
+                            <div className="flex-1 text-center lg:text-left">
+                                <div className="text-base lg:text-lg font-semibold text-gray-800 mb-1">Premium Quality</div>
+                                <div className="text-sm text-gray-500">Discover amazing products from top brands<br className="hidden lg:block" />with guaranteed quality and fast delivery!</div>
                             </div>
                         </div>
                         <button
                             onClick={handleViewAll}
-                            className="bg-lime-300 hover:bg-lime-400 text-black font-semibold px-6 py-3 rounded-full flex items-center gap-2 transition-all"
+                            className="bg-lime-300 hover:bg-lime-400 text-black font-semibold px-6 py-3 rounded-full flex items-center gap-2 transition-all mx-auto lg:mx-0"
                         >
                             View All Products
                             <div className="bg-black text-lime-300 rounded-full p-1">
@@ -40,50 +38,52 @@ const HeroCard = () => {
                         </button>
 
                         {/* Social Icons */}
-                        <div className="flex items-center gap-4 mt-8">
-                            <span className="text-sm text-gray-500">Follow us on:</span>
+                        <div className="flex items-center justify-center lg:justify-start gap-4 mt-8">
+                            <span className="text-sm text-gray-500 hidden sm:block">Follow us on:</span>
                             <Twitter className="w-5 h-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors" />
                             <Instagram className="w-5 h-5 text-gray-400 hover:text-pink-400 cursor-pointer transition-colors" />
                             <Youtube className="w-5 h-5 text-gray-400 hover:text-red-400 cursor-pointer transition-colors" />
                             <Linkedin className="w-5 h-5 text-gray-400 hover:text-blue-600 cursor-pointer transition-colors" />
                         </div>
-                    </div>                    {/* Right Product Image */}
+                    </div>
+
+                    {/* Right Product Image */}
                     <div className="flex-1 flex items-center justify-center relative">
-                        <div className="w-80 h-80 rounded-3xl overflow-hidden shadow-lg bg-gradient-to-br from-gray-50 to-gray-100">
+                        <div className="w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-3xl overflow-hidden shadow-lg bg-gradient-to-br from-gray-50 to-gray-100">
                             <img
                                 src="https://cdn2.hubspot.net/hubfs/53/ecommerce%20marketing.jpg"
                                 alt="Shopping Cart and Products"
                                 className="w-full h-full object-cover z-10"
                             />
                         </div>
-                        {/* Floating dots */}
-                        <div className="absolute top-20 left-10 w-2 h-2 bg-gray-300 rounded-full animate-pulse"></div>
-                        <div className="absolute top-32 right-16 w-3 h-3 bg-blue-400 rounded-full animate-pulse delay-75"></div>
-                        <div className="absolute bottom-32 left-20 w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-150"></div>
-                        <div className="absolute bottom-20 right-10 w-2 h-2 bg-green-600 rounded-full animate-pulse delay-200"></div>
+                        {/* Floating dots - Hide on mobile for cleaner look */}
+                        <div className="hidden lg:block absolute top-20 left-10 w-2 h-2 bg-gray-300 rounded-full animate-pulse"></div>
+                        <div className="hidden lg:block absolute top-32 right-16 w-3 h-3 bg-blue-400 rounded-full animate-pulse delay-75"></div>
+                        <div className="hidden lg:block absolute bottom-32 left-20 w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-150"></div>
+                        <div className="hidden lg:block absolute bottom-20 right-10 w-2 h-2 bg-green-600 rounded-full animate-pulse delay-200"></div>
                     </div>
                 </div>
 
-                {/* Right Side Cards (Stacked) */}
-                <div className="col-span-4 row-span-8 flex flex-col gap-4">
+                {/* Right Side Cards (Stacked) - Responsive */}
+                <div className="lg:col-span-4 lg:row-span-8 flex flex-col gap-4">
                     {/* Why Choose Us Card */}
-                    <div className="glass-strong rounded-2xl p-6 shadow-md flex-1 flex flex-col justify-center">
-                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Why Choose Us</h3>
+                    <div className="glass-strong rounded-2xl p-4 lg:p-6 shadow-md flex-1 flex flex-col justify-center">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center lg:text-left">Why Choose Us</h3>
                         <div className="flex flex-col gap-3">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                            <div className="flex items-center gap-3 justify-center lg:justify-start">
+                                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                                     <Truck className="w-4 h-4 text-green-600" />
                                 </div>
                                 <span className="text-sm font-medium text-gray-700">Fast Delivery</span>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <div className="flex items-center gap-3 justify-center lg:justify-start">
+                                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                                     <Shield className="w-4 h-4 text-blue-600" />
                                 </div>
                                 <span className="text-sm font-medium text-gray-700">Secure Shopping</span>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <div className="flex items-center gap-3 justify-center lg:justify-start">
+                                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
                                     <Package className="w-4 h-4 text-purple-600" />
                                 </div>
                                 <span className="text-sm font-medium text-gray-700">Quality Products</span>

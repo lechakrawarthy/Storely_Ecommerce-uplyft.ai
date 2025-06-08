@@ -2,226 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, Heart, ShoppingCart, Truck, Shield, RefreshCw, Plus, Minus, Zap, Award, Clock, Eye, Share } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
+import { useRecentlyViewed } from '../hooks/use-recently-viewed';
+import { allProducts, getProductById, type Product } from '../data/products';
 import MinimizedNavigation from '../components/MinimizedNavigation';
+import MobileProductNavigation from '../components/MobileProductNavigation';
 import Footer from '../components/Footer';
-
-// Import products data (you might want to move this to a separate file)
-const allProducts = [
-    // Electronics
-    {
-        id: 'e1',
-        title: 'New Gen X-Bud',
-        price: 1299,
-        originalPrice: 1599,
-        image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
-        category: 'Electronics',
-        color: 'Black',
-        rating: 4.7,
-        reviews: 320,
-        badge: 'Best Seller',
-        discount: 19,
-        inStock: true,
-        description: 'Premium wireless earbuds with noise cancellation',
-    },
-    {
-        id: 'e2',
-        title: 'Light Grey Surface Headphone',
-        price: 1999,
-        originalPrice: 2499,
-        image: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
-        category: 'Electronics',
-        color: 'Grey',
-        rating: 4.8,
-        reviews: 210,
-        badge: 'New',
-        discount: 20,
-        inStock: true,
-        description: 'Professional over-ear headphones with studio quality',
-    },
-    {
-        id: 'e3',
-        title: 'Smart Watch Pro',
-        price: 2999,
-        originalPrice: 3499,
-        image: 'https://images.unsplash.com/photo-1579586337278-3f436f25d4d3?auto=format&fit=crop&w=400&q=80',
-        category: 'Electronics',
-        color: 'Black',
-        rating: 4.6,
-        reviews: 450,
-        badge: 'Hot Deal',
-        discount: 14,
-        inStock: true,
-        description: 'Advanced fitness tracking and smart notifications',
-    },
-    {
-        id: 'e4',
-        title: 'Wireless Mouse',
-        price: 899,
-        originalPrice: 1099,
-        image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=400&q=80',
-        category: 'Electronics',
-        color: 'White',
-        rating: 4.4,
-        reviews: 180,
-        discount: 18,
-        inStock: false,
-        description: 'Ergonomic wireless mouse with precision tracking',
-    },
-    // Textiles
-    {
-        id: 't1',
-        title: 'Classic White T-Shirt',
-        price: 499,
-        originalPrice: 699,
-        image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
-        category: 'Textiles',
-        color: 'White',
-        rating: 4.5,
-        reviews: 98,
-        badge: 'Eco-Friendly',
-        discount: 29,
-        inStock: true,
-        description: '100% organic cotton premium quality t-shirt',
-    },
-    {
-        id: 't2',
-        title: 'Blue Cotton Shirt',
-        price: 699,
-        originalPrice: 999,
-        image: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
-        category: 'Textiles',
-        color: 'Blue',
-        rating: 4.6,
-        reviews: 120,
-        badge: 'Premium',
-        discount: 30,
-        inStock: true,
-        description: 'Casual cotton shirt perfect for everyday wear',
-    },
-    {
-        id: 't3',
-        title: 'Summer Dress',
-        price: 1299,
-        originalPrice: 1799,
-        image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=400&q=80',
-        category: 'Textiles',
-        color: 'Floral',
-        rating: 4.7,
-        reviews: 85,
-        badge: 'Trending',
-        discount: 28,
-        inStock: true,
-        description: 'Elegant floral dress perfect for summer occasions',
-    },
-    {
-        id: 't4',
-        title: 'Denim Jacket',
-        price: 1599,
-        originalPrice: 2199,
-        image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=400&q=80',
-        category: 'Textiles',
-        color: 'Blue',
-        rating: 4.8,
-        reviews: 95,
-        badge: 'Classic',
-        discount: 27,
-        inStock: true,
-        description: 'Classic denim jacket with modern fit',
-    },
-    // Books
-    {
-        id: 'b1',
-        title: 'The Midnight Library',
-        price: 349,
-        originalPrice: 499,
-        image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80',
-        category: 'Books',
-        color: 'Hardcover',
-        rating: 4.9,
-        reviews: 1420,
-        badge: 'Bestseller',
-        discount: 30,
-        inStock: true,
-        description: 'A life-changing novel about infinite possibility',
-    },
-    {
-        id: 'b2',
-        title: 'Atomic Habits',
-        price: 399,
-        originalPrice: 599,
-        image: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=400&q=80',
-        category: 'Books',
-        color: 'Paperback',
-        rating: 4.8,
-        reviews: 980,
-        badge: 'Self-Help',
-        discount: 33,
-        inStock: true,
-        description: 'Transform your habits and achieve remarkable results',
-    },
-    {
-        id: 'b3',
-        title: 'The Psychology of Money',
-        price: 299,
-        originalPrice: 449,
-        image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80',
-        category: 'Books',
-        color: 'Paperback',
-        rating: 4.7,
-        reviews: 750,
-        badge: 'Finance',
-        discount: 33,
-        inStock: true,
-        description: 'Timeless lessons about wealth, greed, and happiness',
-    },
-    {
-        id: 'b4',
-        title: 'Sapiens',
-        price: 449,
-        originalPrice: 699,
-        image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=400&q=80',
-        category: 'Books',
-        color: 'Hardcover',
-        rating: 4.6,
-        reviews: 1200,
-        badge: 'History',
-        discount: 36,
-        inStock: true,
-        description: 'A brief history of humankind and our evolution',
-    },
-];
-
-export type Product = {
-    id: string;
-    title: string;
-    price: number;
-    originalPrice?: number;
-    image: string;
-    category: string;
-    color: string;
-    rating: number;
-    reviews: number;
-    badge?: string;
-    discount?: number;
-    inStock: boolean;
-    description: string;
-};
+import OptimizedImage from '../components/OptimizedImage';
 
 const ProductDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
-    const [isWishlisted, setIsWishlisted] = useState(false);
     const { addItem } = useCart();
+    const { wishlist, toggleWishlist } = useWishlist();
+    const { addToRecentlyViewed } = useRecentlyViewed();
 
-    const product = allProducts.find(p => p.id === id);
+    const product = getProductById(id || '');
 
     useEffect(() => {
         if (!product) {
             navigate('/');
+        } else {
+            // Add to recently viewed when product loads
+            addToRecentlyViewed(product);
         }
-    }, [product, navigate]);
+    }, [product, navigate, addToRecentlyViewed]);
 
     if (!product) return null;
 
@@ -277,9 +84,8 @@ const ProductDetail: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                     {/* Image Section */}
                     <div className="space-y-6">
-                        {/* Main Image */}
-                        <div className="relative aspect-square glass-card rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
-                            <img
+                        {/* Main Image */}                        <div className="relative aspect-square glass-card rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
+                            <OptimizedImage
                                 src={images[selectedImage]}
                                 alt={product.title}
                                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
@@ -300,15 +106,14 @@ const ProductDetail: React.FC = () => {
                             </div>
 
                             {/* Wishlist & Share */}
-                            <div className="absolute top-6 right-6 flex flex-col gap-3">
-                                <button
-                                    onClick={() => setIsWishlisted(!isWishlisted)}
-                                    className="p-4 glass-strong rounded-full hover:glass-card transition-all border border-white/30 animate-hover-lift"
-                                >
-                                    <Heart
-                                        className={`w-6 h-6 ${isWishlisted ? 'fill-red-500 text-red-500 animate-heart-bounce' : 'text-gray-600'}`}
-                                    />
-                                </button>
+                            <div className="absolute top-6 right-6 flex flex-col gap-3">                                <button
+                                onClick={() => toggleWishlist(product.id)}
+                                className="p-4 glass-strong rounded-full hover:glass-card transition-all border border-white/30 animate-hover-lift"
+                            >
+                                <Heart
+                                    className={`w-6 h-6 ${wishlist.includes(product.id) ? 'fill-red-500 text-red-500 animate-heart-bounce' : 'text-gray-600'}`}
+                                />
+                            </button>
                                 <button className="p-4 glass-strong rounded-full hover:glass-card transition-all border border-white/30 animate-hover-lift">
                                     <Share className="w-6 h-6 text-gray-600" />
                                 </button>
@@ -334,9 +139,8 @@ const ProductDetail: React.FC = () => {
                                     className={`aspect-square w-20 h-20 rounded-xl overflow-hidden border-3 transition-all duration-300 hover:scale-110 ${selectedImage === index
                                         ? 'border-sage-400 shadow-lg scale-110'
                                         : 'border-white/40 hover:border-sage-300'
-                                        }`}
-                                >
-                                    <img src={img} alt="" className="w-full h-full object-cover" />
+                                        }`}                                >
+                                    <OptimizedImage src={img} alt="" className="w-full h-full object-cover" />
                                 </button>
                             ))}
                         </div>
@@ -468,8 +272,12 @@ const ProductDetail: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </div>                </div>
+            </div>
+
+            {/* Mobile Product Navigation */}
+            <div className="lg:hidden">
+                <MobileProductNavigation currentProduct={product} />
             </div>
 
             <Footer />
