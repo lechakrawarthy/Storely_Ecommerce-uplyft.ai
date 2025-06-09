@@ -23,6 +23,9 @@ const Checkout = lazy(() => import("./pages/Checkout"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const SearchResults = lazy(() => import("./pages/SearchResults"));
 const SearchTestPage = lazy(() => import("./pages/SearchTestPage"));
+const MigrationTest = lazy(() => import("./components/MigrationTest"));
+const ProductsDebug = lazy(() => import("./components/ProductsDebug"));
+const SimpleApiTest = lazy(() => import("./components/SimpleApiTest"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
 const Comparison = lazy(() => import("./pages/Comparison"));
 const RecentlyViewed = lazy(() => import("./pages/RecentlyViewed"));
@@ -94,10 +97,28 @@ const App = () => {
                             <Suspense fallback={<SkeletonLoader height="100vh" />}>
                               <SearchResults />
                             </Suspense>
-                          } />
-                          <Route path="/search-test" element={
+                          } />                          <Route path="/search-test" element={
                             <Suspense fallback={<SkeletonLoader height="100vh" />}>
                               <SearchTestPage />
+                            </Suspense>
+                          } />
+                          <Route path="/migration-test" element={
+                            <Suspense fallback={<SkeletonLoader height="100vh" />}>
+                              <MigrationTest />
+                            </Suspense>
+                          } />                          <Route path="/debug-products" element={
+                            <Suspense fallback={<SkeletonLoader height="100vh" />}>
+                              <ProductsDebug />
+                            </Suspense>
+                          } />
+                          <Route path="/api-test" element={
+                            <Suspense fallback={<SkeletonLoader height="100vh" />}>
+                              <SimpleApiTest />
+                            </Suspense>
+                          } />
+                          <Route path="/simple-api-test" element={
+                            <Suspense fallback={<SkeletonLoader height="100vh" />}>
+                              <SimpleApiTest />
                             </Suspense>
                           } />
                           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

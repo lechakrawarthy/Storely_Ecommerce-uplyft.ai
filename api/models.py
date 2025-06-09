@@ -7,7 +7,7 @@ import json
 import uuid
 
 # Create SQLite database
-db_path = os.path.join(os.path.dirname(__file__), 'bookbuddy.db')
+db_path = os.path.join(os.path.dirname(__file__), 'store.db')
 engine = create_engine(f'sqlite:///{db_path}', echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -16,35 +16,33 @@ Base = declarative_base()
 class Product(Base):
     __tablename__ = "products"
 
-    id = Column(String, primary_key=True)
-    title = Column(String, nullable=False)
-    price = Column(Float, nullable=False)
-    original_price = Column(Float)
-    image = Column(String)
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
     category = Column(String)
-    color = Column(String)
-    rating = Column(Float)
-    reviews = Column(Integer)
-    badge = Column(String)
-    discount = Column(Float)
-    in_stock = Column(Boolean, default=True)
+    price = Column(Float, nullable=False)
+    stock = Column(Integer)
     description = Column(Text)
+    image_url = Column(String)
+    badge = Column(String)
 
     def to_dict(self):
         return {
-            "id": self.id,
-            "title": self.title,
-            "price": self.price,
-            "originalPrice": self.original_price,
-            "image": self.image,
+            "id": str(self.id),
+            "title": self.name,  # Map name to title for frontend compatibility
+            "name": self.name,
             "category": self.category,
-            "color": self.color,
-            "rating": self.rating,
-            "reviews": self.reviews,
+            "price": self.price,
+            "stock": self.stock,
+            "inStock": self.stock > 0 if self.stock is not None else True,
+            "description": self.description,
+            "image": self.image_url,  # Map image_url to image for frontend compatibility
+            "imageUrl": self.image_url,
             "badge": self.badge,
-            "discount": self.discount,
-            "inStock": self.in_stock,
-            "description": self.description
+            "rating": 4.5,  # Default rating since not in DB
+            "reviews": 100,  # Default reviews since not in DB
+            "originalPrice": None,
+            "discount": None,
+            "color": None
         }
 
 

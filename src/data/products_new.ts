@@ -28,65 +28,6 @@ export interface DbProduct {
     badge?: string;
 }
 
-// Fallback products data (used when API is unavailable)
-const fallbackProducts: Product[] = [
-    {
-        id: '1',
-        title: 'The Great Gatsby',
-        price: 12.99,
-        originalPrice: 15.99,
-        image: 'https://covers.openlibrary.org/b/id/8225261-L.jpg',
-        category: 'Books',
-        color: 'Blue',
-        rating: 4.2,
-        reviews: 1205,
-        badge: 'Bestseller',
-        discount: 19,
-        inStock: true,
-        description: 'A classic American novel set in the Jazz Age, exploring themes of wealth, love, and the American Dream.'
-    },
-    {
-        id: '2',
-        title: 'To Kill a Mockingbird',
-        price: 13.99,
-        image: 'https://covers.openlibrary.org/b/id/8228691-L.jpg',
-        category: 'Books',
-        color: 'Green',
-        rating: 4.5,
-        reviews: 2341,
-        badge: 'Classic',
-        inStock: true,
-        description: 'A gripping tale of racial injustice and childhood innocence in the American South.'
-    },
-    {
-        id: '3',
-        title: 'iPhone 14 Pro',
-        price: 999.99,
-        originalPrice: 1099.99,
-        image: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-14-pro-deep-purple-select?wid=470&hei=556&fmt=png-alpha&.v=1663703841896',
-        category: 'Electronics',
-        color: 'Purple',
-        rating: 4.8,
-        reviews: 3456,
-        badge: 'New',
-        discount: 9,
-        inStock: true,
-        description: 'Latest iPhone with Pro camera system and Dynamic Island.'
-    },
-    {
-        id: '4',
-        title: 'Cotton T-Shirt',
-        price: 24.99,
-        image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop',
-        category: 'Textiles',
-        color: 'White',
-        rating: 4.3,
-        reviews: 567,
-        inStock: true,
-        description: '100% organic cotton t-shirt, comfortable and breathable.'
-    }
-];
-
 // Convert database product to frontend format
 export const convertDbProductToFrontend = (dbProduct: DbProduct): Product => ({
     id: dbProduct.id.toString(),
@@ -105,11 +46,7 @@ export const convertDbProductToFrontend = (dbProduct: DbProduct): Product => ({
 });
 
 // Dynamic products loaded from database
-export let allProducts: Product[] = fallbackProducts; // Initialize with fallback data
-
-// Loading state
-export let isProductsLoading = true;
-export let productsLoadError: string | null = null;
+export let allProducts: Product[] = [];
 
 // API Base URL
 const API_BASE = 'http://localhost:5000/api';
@@ -117,9 +54,6 @@ const API_BASE = 'http://localhost:5000/api';
 // Fetch products from database
 export const loadProductsFromDB = async (): Promise<Product[]> => {
     try {
-        isProductsLoading = true;
-        productsLoadError = null;
-
         const response = await fetch(`${API_BASE}/products?limit=300`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -131,17 +65,11 @@ export const loadProductsFromDB = async (): Promise<Product[]> => {
         // Update the global allProducts array
         allProducts = frontendProducts;
 
-        console.log(`✅ Loaded ${frontendProducts.length} products from database`);
         return frontendProducts;
     } catch (error) {
-        console.warn('⚠️ Failed to load products from database, using fallback data:', error);
-        productsLoadError = error instanceof Error ? error.message : 'Failed to load products';
-
-        // Keep fallback products
-        allProducts = fallbackProducts;
-        return fallbackProducts;
-    } finally {
-        isProductsLoading = false;
+        console.error('Error loading products from database:', error);
+        // Return empty array on error
+        return [];
     }
 };
 
@@ -188,13 +116,6 @@ export const sortProducts = (products: Product[], sortBy: string): Product[] => 
         }
     });
 };
-
-// Get loading state
-export const getProductsLoadingState = () => ({
-    isLoading: isProductsLoading,
-    error: productsLoadError,
-    hasData: allProducts.length > 0
-});
 
 // Initialize products on module load
 loadProductsFromDB().catch(console.error);

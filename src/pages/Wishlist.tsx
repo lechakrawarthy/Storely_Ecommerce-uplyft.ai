@@ -4,33 +4,26 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../hooks/useAuth';
-import { allProducts } from '../data/products';
+import { allProducts, getProductsLoadingState } from '../data/products';
 import OptimizedImage from '../components/OptimizedImage';
 import { Button } from '../components/ui/button';
 import { useToast } from '../components/ui/use-toast';
 import MinimizedNavigation from '../components/MinimizedNavigation';
 
 const WishlistPage = () => {
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
-    const { addToCart } = useCart();
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid'); const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
+    const { addItem } = useCart();
     const { isAuthenticated } = useAuth();
     const { toast } = useToast();
     const navigate = useNavigate();
+    const { isLoading: productsLoading, error: productsError } = getProductsLoadingState();
+    const { isLoading, error } = getProductsLoadingState();
 
     // Get wishlist products from all products
     const wishlistProducts = allProducts.filter(product =>
         wishlist.includes(product.id)
-    );
-
-    const handleAddToCart = (product: typeof allProducts[0]) => {
-        addToCart({
-            id: product.id,
-            title: product.title,
-            price: product.price,
-            image: product.image,
-            quantity: 1,
-        });
+    ); const handleAddToCart = (product: typeof allProducts[0]) => {
+        addItem(product);
         toast({
             title: "Added to Cart",
             description: `${product.title} has been added to your cart.`,
@@ -65,6 +58,48 @@ const WishlistPage = () => {
                                     Sign In
                                 </Button>
                             </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>);
+    }    // Show loading state while products are being fetched
+    if (productsLoading) {
+        return (
+            <div className="min-h-screen bg-cream-50">
+                <MinimizedNavigation />
+                <div className="pt-20 pb-12">
+                    <div className="max-w-md mx-auto text-center px-4">
+                        <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                            <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 rounded-full animate-pulse"></div>
+                            <div className="h-6 bg-gray-200 rounded-lg mb-2 animate-pulse"></div>
+                            <div className="h-4 bg-gray-200 rounded-lg mb-6 animate-pulse"></div>
+                            <div className="h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }    // Show error state if products failed to load
+    if (productsError) {
+        return (
+            <div className="min-h-screen bg-cream-50">
+                <MinimizedNavigation />
+                <div className="pt-20 pb-12">
+                    <div className="max-w-md mx-auto text-center px-4">
+                        <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                            <Heart className="w-16 h-16 text-red-300 mx-auto mb-4" />
+                            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                                Unable to load wishlist
+                            </h2>
+                            <p className="text-gray-600 mb-6">
+                                {productsError}. Your wishlist items are still saved.
+                            </p>
+                            <Button
+                                onClick={() => window.location.reload()}
+                                className="w-full"
+                            >
+                                Try Again
+                            </Button>
                         </div>
                     </div>
                 </div>

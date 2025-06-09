@@ -255,7 +255,7 @@ def generate_response(session_id, message):
 
         # Handle based on intent
         if intent == 'greeting':
-            response['message'] = "Hello! I'm your Book Buddy AI assistant. I can help you find books, check prices, or answer questions about our store. What are you looking for today?"
+            response['message'] = "Hello! I'm your Storely AI assistant. I can help you find books, check prices, or answer questions about our store. What are you looking for today?"
             response['suggestions'] = ['Find popular books',
                                        'New releases', 'Book recommendations', 'Search by author']
 
@@ -1678,7 +1678,7 @@ def validate_json():
 
 
 if __name__ == '__main__':
-    print("Starting Book Buddy API server...")
+    print("Starting Storely API server...")
     print("Initializing NLTK...")
 
     # Start Flask server

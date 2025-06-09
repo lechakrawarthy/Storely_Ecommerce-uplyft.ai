@@ -23,7 +23,10 @@ class Config:
         "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost:8080",
+        "http://localhost:8081",
         "http://127.0.0.1:3000",
+        "http://localhost:8082",
+        "http://localhost:8083",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:8080"
     ]
@@ -261,6 +264,59 @@ def admin_dashboard():
     except Exception as e:
         print(f"Error serving admin dashboard: {e}")
         return jsonify({'error': 'Admin dashboard not available'}), 500
+
+
+# Simple products endpoint for frontend testing
+@app.route('/api/products', methods=['GET'])
+def get_products():
+    """Simple products endpoint that returns mock data"""
+    # Mock products data
+    mock_products = [
+        {
+            "id": "1",
+            "name": "iPhone 14 Pro",
+            "category": "Electronics",
+            "price": 999.99,
+            "stock": 10,
+            "description": "Latest iPhone with advanced camera system",
+            "image_url": "https://via.placeholder.com/300x300?text=iPhone",
+            "badge": "Bestseller"
+        },
+        {
+            "id": "2",
+            "name": "MacBook Air M2",
+            "category": "Electronics",
+            "price": 1199.99,
+            "stock": 5,
+            "description": "Powerful and efficient laptop",
+            "image_url": "https://via.placeholder.com/300x300?text=MacBook",
+            "badge": "New"
+        },
+        {
+            "id": "3",
+            "name": "To Kill a Mockingbird",
+            "category": "Books",
+            "price": 12.99,
+            "stock": 20,
+            "description": "Classic American literature",
+            "image_url": "https://via.placeholder.com/300x300?text=Book",
+            "badge": "Classic"
+        }
+    ]
+
+    # Apply limit if specified
+    limit = request.args.get('limit', type=int)
+    if limit:
+        mock_products = mock_products[:limit]
+
+    return jsonify(mock_products), 200
+
+
+@app.route('/api/categories', methods=['GET'])
+def get_categories():
+    """Simple categories endpoint"""
+    categories = ["All", "Electronics", "Books", "Clothing"]
+    return jsonify(categories), 200
 
 
 # Add test user if it doesn't exist already
