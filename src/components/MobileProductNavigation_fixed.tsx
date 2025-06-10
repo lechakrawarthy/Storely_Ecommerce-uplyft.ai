@@ -47,12 +47,11 @@ const MobileProductNavigation: React.FC<MobileProductNavigationProps> = ({
             setShowIndicator(true);
             setTimeout(() => setShowIndicator(false), 2000);
         }
-    };
-
-    // Swipe gesture handling
-    const { onTouchStart, onTouchEnd } = useSwipe({
+    };    // Swipe gesture handling
+    const swipeHandlers = useSwipe({
         onSwipeLeft: () => !isLoading && navigateToProduct('next'),
         onSwipeRight: () => !isLoading && navigateToProduct('prev'),
+    }, {
         threshold: 100,
         velocity: 0.3,
     });
@@ -63,12 +62,10 @@ const MobileProductNavigation: React.FC<MobileProductNavigationProps> = ({
     const nextProduct = hasNext ? allProducts[currentIndex + 1] : null;
 
     return (
-        <>
-            {/* Gesture Area - Full width invisible overlay */}
+        <>            {/* Gesture Area - Full width invisible overlay */}
             <div
+                ref={swipeHandlers.ref as React.RefObject<HTMLDivElement>}
                 className={`fixed inset-0 z-10 lg:hidden ${className}`}
-                onTouchStart={onTouchStart}
-                onTouchEnd={onTouchEnd}
                 style={{ pointerEvents: 'none' }}
             />
 

@@ -35,11 +35,9 @@ export const useProducts = () => {
         };
 
         loadInitialData();
-    }, []);
-
-    // Get products by category
+    }, []);    // Get products by category
     const getProductsByCategory = (category: string, limit?: number) => {
-        let filtered = category === 'All'
+        const filtered = category === 'All'
             ? products
             : products.filter(p => p.category === category);
 

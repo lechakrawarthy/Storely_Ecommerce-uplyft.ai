@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useProducts } from '../hooks/useProducts';
+import { type Product } from '../data/products';
+
+interface ApiResponse {
+    success?: boolean;
+    data?: Product[];
+    products?: Product[];
+}
 
 const ProductsDebug = () => {
     const { products, categories, loading, error } = useProducts();
-    const [directApiTest, setDirectApiTest] = useState<any>(null);
+    const [directApiTest, setDirectApiTest] = useState<ApiResponse | Product[] | null>(null);
     const [directApiError, setDirectApiError] = useState<string | null>(null);
 
     // Test direct API call
