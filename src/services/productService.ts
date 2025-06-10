@@ -61,8 +61,16 @@ export const fetchProducts = async (limit?: number, category?: string): Promise<
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const dbProducts: DbProduct[] = await response.json();
-        return dbProducts.map(convertDbProductToFrontend);
+        const responseData = await response.json();
+        // Handle backend response format { "success": true, "data": { products: [...], total: 300, ... } }
+        if (responseData.success && responseData.data && responseData.data.products) {
+            const dbProducts: DbProduct[] = responseData.data.products;
+            return dbProducts.map(convertDbProductToFrontend);
+        } else {
+            // Fallback for direct array response
+            const dbProducts: DbProduct[] = Array.isArray(responseData) ? responseData : [];
+            return dbProducts.map(convertDbProductToFrontend);
+        }
     } catch (error) {
         console.error('Error fetching products:', error);
         throw error;
@@ -94,8 +102,10 @@ export const fetchCategories = async (): Promise<string[]> => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        return ['All', ...data];
+        const responseData = await response.json();
+        // Handle backend response format { "success": true, "data": [...] }
+        const categories = responseData.data || responseData;
+        return ['All', ...categories.filter((cat: string) => cat !== 'All')];
     } catch (error) {
         console.error('Error fetching categories:', error);
         return ['All', 'Books', 'Electronics', 'Textiles']; // Fallback

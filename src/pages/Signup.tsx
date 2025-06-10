@@ -161,13 +161,13 @@ const Signup = () => {
         <div className="w-1/2 bg-black flex items-center justify-center p-12 relative z-10">
             <div className="w-full max-w-md bg-black rounded-3xl p-8">{/* Brand */}
                 <div className="mb-8">
-                    <h1 className="text-2xl font-semibold text-white mb-2">Stylore</h1>
+                    <h1 className="text-2xl font-semibold text-white mb-2">storely</h1>
                 </div>
 
                 {/* Welcome Message */}
                 <div className="mb-8">
                     <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
-                    <p className="text-gray-400 text-sm">Join Stylore and start shopping</p>
+                    <p className="text-gray-400 text-sm">Join storely and start shopping</p>
                 </div>
 
                 {/* Error Display */}
@@ -371,13 +371,13 @@ const Signup = () => {
                 {/* Quote */}
                 <div className="mb-8">
                     <p className="text-lg leading-relaxed mb-6">
-                        "Start your shopping journey with Stylore today. Discover amazing
+                        "Start your shopping journey with storely today. Discover amazing
                         electronics, books, and textiles at unbeatable prices."
                     </p>
 
                     <div className="mb-8">
                         <h4 className="font-semibold text-lg">Michael Chen</h4>
-                        <p className="text-green-100">Product Manager at Stylore</p>
+                        <p className="text-green-100">Product Manager at storely</p>
                     </div>
                 </div>
 

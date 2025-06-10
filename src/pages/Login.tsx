@@ -150,7 +150,7 @@ const Login = () => {
       <div className="w-1/2 bg-black flex items-center justify-center p-12 relative z-10">
         <div className="w-full max-w-md bg-black rounded-3xl p-8">{/* Brand */}
           <div className="mb-8">
-            <h1 className="text-2xl font-semibold text-white mb-2">Stylore</h1>
+            <h1 className="text-2xl font-semibold text-white mb-2">storely</h1>
           </div>
 
           {/* Welcome Message */}
@@ -327,7 +327,7 @@ const Login = () => {
           <div className="mb-8">
             <p className="text-lg leading-relaxed mb-6">
               "Shop the latest electronics, books, and textiles with
-              unbeatable quality and prices at Stylore."
+              unbeatable quality and prices at storely."
             </p>
 
             <div className="mb-8">
@@ -359,7 +359,7 @@ const Login = () => {
               </button>
             </div>
             <p className="text-sm text-green-100 mb-4">
-              Join thousands of satisfied customers who trust Stylore for
+              Join thousands of satisfied customers who trust storely for
               quality products and exceptional service.
             </p>
             <div className="flex -space-x-2">

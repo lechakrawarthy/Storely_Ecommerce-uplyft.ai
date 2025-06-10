@@ -239,14 +239,15 @@ class APIController:
 
     def logout(self, current_user: Dict[str, Any]) -> Dict[str, Any]:
         """Handle user logout"""
-        try:
-            # Get token from header
+        try:            # Get token from header
             auth_header = request.headers.get('Authorization', '')
             token = auth_header.split(
                 ' ')[1] if auth_header.startswith('Bearer ') else ''
-
+            
             result = self.auth_controller.logout(token)
-            return jsonify(result), 200        except Exception as e:
+            return jsonify(result), 200
+
+        except Exception as e:
             return jsonify({
                 'success': False,
                 'error': 'Internal server error',
@@ -257,11 +258,11 @@ class APIController:
     def get_products(self, current_user: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Get all products with optional filtering"""
         try:
-            # Get query parameters
+            # Get query parameters with proper defaults
             category = request.args.get('category')
             search = request.args.get('search')
-            limit = request.args.get('limit', type=int)
-            offset = request.args.get('offset', type=int, default=0)
+            limit = request.args.get('limit', default=10, type=int)
+            offset = request.args.get('offset', default=0, type=int)
 
             # Create request data dictionary that ProductController expects
             request_data = {
@@ -281,7 +282,9 @@ class APIController:
                 'success': False,
                 'error': 'Internal server error',
                 'message': 'Failed to retrieve products'
-            }), 500    def get_product(self, product_id: str, current_user: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+            }), 500
+
+    def get_product(self, product_id: str, current_user: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Get single product by ID"""
         try:
             # Convert string product_id to integer
@@ -416,4 +419,257 @@ class APIController:
             return jsonify({
                 'success': False,
                 'error': 'Health check failed'
+            }), 500
+
+    # === Missing Auth Methods ===
+    
+    def forgot_password(self) -> Dict[str, Any]:
+        """Forgot password endpoint"""
+        try:
+            data = request.get_json() or {}
+            result = self.auth_controller.forgot_password(data)
+            status_code = 200 if result['success'] else 400
+            return jsonify(result), status_code
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def reset_password(self) -> Dict[str, Any]:
+        """Reset password endpoint"""
+        try:
+            data = request.get_json() or {}
+            result = self.auth_controller.reset_password(data)
+            status_code = 200 if result['success'] else 400
+            return jsonify(result), status_code
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    # === Missing Product Methods ===
+    
+    def get_products_by_category(self, category: str) -> Dict[str, Any]:
+        """Get products by category"""
+        try:
+            request_data = {'category': category, 'limit': 50}
+            result = self.product_controller.get_products(request_data)
+            status_code = 200 if result['success'] else 400
+            return jsonify(result), status_code
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def create_product(self) -> Dict[str, Any]:
+        """Create new product (admin only)"""
+        try:
+            data = request.get_json() or {}
+            # TODO: Add admin authentication check
+            return jsonify({
+                'success': False,
+                'error': 'Not implemented'
+            }), 501
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def update_product(self, product_id: int) -> Dict[str, Any]:
+        """Update product (admin only)"""
+        try:
+            data = request.get_json() or {}
+            # TODO: Add admin authentication check
+            return jsonify({
+                'success': False,
+                'error': 'Not implemented'
+            }), 501
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def delete_product(self, product_id: int) -> Dict[str, Any]:
+        """Delete product (admin only)"""
+        try:
+            # TODO: Add admin authentication check
+            return jsonify({
+                'success': False,
+                'error': 'Not implemented'
+            }), 501
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    # === Missing Chat Methods ===
+    
+    def chat(self) -> Dict[str, Any]:
+        """Chat with AI assistant"""
+        try:
+            data = request.get_json() or {}
+            result = self.chat_controller.chat(data)
+            status_code = 200 if result['success'] else 400
+            return jsonify(result), status_code
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def clear_chat_history(self) -> Dict[str, Any]:
+        """Clear chat history"""
+        try:
+            data = request.get_json() or {}
+            result = self.chat_controller.clear_history(data)
+            status_code = 200 if result['success'] else 400
+            return jsonify(result), status_code
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    # === Missing Analytics Methods ===
+    
+    def get_analytics_dashboard(self) -> Dict[str, Any]:
+        """Get analytics dashboard data"""
+        try:
+            data = request.args.to_dict()
+            result = self.analytics_controller.get_dashboard(data)
+            status_code = 200 if result['success'] else 400
+            return jsonify(result), status_code
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def get_product_analytics(self) -> Dict[str, Any]:
+        """Get product analytics"""
+        try:
+            data = request.args.to_dict()
+            result = self.analytics_controller.get_product_analytics(data)
+            status_code = 200 if result['success'] else 400
+            return jsonify(result), status_code
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def get_user_analytics(self) -> Dict[str, Any]:
+        """Get user analytics"""
+        try:
+            data = request.args.to_dict()
+            result = self.analytics_controller.get_user_analytics(data)
+            status_code = 200 if result['success'] else 400
+            return jsonify(result), status_code
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def get_sales_analytics(self) -> Dict[str, Any]:
+        """Get sales analytics"""
+        try:
+            data = request.args.to_dict()
+            result = self.analytics_controller.get_sales_analytics(data)
+            status_code = 200 if result['success'] else 400
+            return jsonify(result), status_code
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    # === Missing Admin Methods ===
+    
+    def get_all_users(self) -> Dict[str, Any]:
+        """Get all users (admin only)"""
+        try:
+            # TODO: Add admin authentication check
+            return jsonify({
+                'success': False,
+                'error': 'Not implemented'
+            }), 501
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def delete_user(self, user_id: int) -> Dict[str, Any]:
+        """Delete user (admin only)"""
+        try:
+            # TODO: Add admin authentication check
+            return jsonify({
+                'success': False,
+                'error': 'Not implemented'
+            }), 501
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    # === Missing Cart Methods ===
+    
+    def get_cart(self) -> Dict[str, Any]:
+        """Get user cart"""
+        try:
+            return jsonify({
+                'success': False,
+                'error': 'Not implemented'
+            }), 501
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def add_to_cart(self) -> Dict[str, Any]:
+        """Add item to cart"""
+        try:
+            return jsonify({
+                'success': False,
+                'error': 'Not implemented'
+            }), 501
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def remove_from_cart(self) -> Dict[str, Any]:
+        """Remove item from cart"""
+        try:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 501
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
+            }), 500
+
+    def clear_cart(self) -> Dict[str, Any]:
+        """Clear cart"""
+        try:
+            return jsonify({
+                'success': False,
+                'error': 'Not implemented'
+            }), 501
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': 'Internal server error'
             }), 500

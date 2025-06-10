@@ -16,7 +16,15 @@ class UserRepository:
     """User data access operations"""
 
     def __init__(self, db_session: Session = None):
-        self.db = db_session or get_db_session()
+        self._db_session = db_session
+        self._db = None
+
+    @property
+    def db(self):
+        """Lazy database session initialization"""
+        if self._db is None:
+            self._db = self._db_session or get_db_session()
+        return self._db
 
     def create_user(self, user_data: UserRegistrationRequest) -> User:
         """Create a new user"""

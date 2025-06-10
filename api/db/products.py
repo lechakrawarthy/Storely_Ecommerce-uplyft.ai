@@ -15,7 +15,15 @@ class ProductRepository:
     """Product data access operations"""
 
     def __init__(self, db_session: Session = None):
-        self.db = db_session or get_db_session()
+        self._db_session = db_session
+        self._db = None
+
+    @property
+    def db(self):
+        """Lazy database session initialization"""
+        if self._db is None:
+            self._db = self._db_session or get_db_session()
+        return self._db
 
     def get_all_products(self, filters: Dict[str, Any] = None) -> List[Product]:
         """Get all products with optional filters"""
@@ -42,17 +50,19 @@ class ProductRepository:
                         or_(
                             Product.name.ilike(search_term),
                             Product.description.ilike(search_term),
-                            Product.category.ilike(search_term)
-                        )
-                    )
+                            Product.category.ilike(search_term)                        )
+                    )            # Add ordering to ensure Electronics appear early - reverse alphabetical by category
+            # This puts Electronics first, then Clothing, then Books
+            query = query.order_by(Product.category.desc(), Product.id)
 
-                # Pagination
+            # Pagination (must come AFTER ordering)
+            if filters:
                 if 'offset' in filters:
                     query = query.offset(filters['offset'])
 
                 if 'limit' in filters:
                     query = query.limit(filters['limit'])
-
+            
             products = query.all()
             logger.info(f"Retrieved {len(products)} products")
             return products

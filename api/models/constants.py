@@ -14,7 +14,7 @@ TOKEN_EXPIRY_HOURS = 24
 REFRESH_TOKEN_EXPIRY_DAYS = 7
 
 # Product Constants
-MAX_PRODUCTS_PER_REQUEST = 50
+MAX_PRODUCTS_PER_REQUEST = 500  # Increased to support frontend requests
 DEFAULT_PRODUCTS_LIMIT = 10
 
 # Chat Constants
@@ -77,14 +77,9 @@ class HTTPStatus:
 
 # Product Categories
 PRODUCT_CATEGORIES = [
-    "Fiction",
-    "Science",
-    "History",
-    "Biography",
-    "Technology",
-    "Business",
-    "Arts",
-    "Health"
+    "Books",
+    "Electronics", 
+    "Clothing"
 ]
 
 # Chat Intents

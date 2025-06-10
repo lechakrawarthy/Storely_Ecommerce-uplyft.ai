@@ -31,14 +31,9 @@ class ChatIntent(Enum):
 
 
 class ProductCategory(Enum):
-    FICTION = "Fiction"
-    SCIENCE = "Science"
-    HISTORY = "History"
-    BIOGRAPHY = "Biography"
-    TECHNOLOGY = "Technology"
-    BUSINESS = "Business"
-    ARTS = "Arts"
-    HEALTH = "Health"
+    BOOKS = "Books"
+    ELECTRONICS = "Electronics"
+    CLOTHING = "Clothing"
 
 # Request/Response Data Classes
 
@@ -83,21 +78,25 @@ class ProductResponse:
     category: str
     price: float
     stock: int
-    in_stock: bool
+    inStock: bool  # Changed from in_stock to inStock to match database
     description: str
-    image_url: str
+    image: str     # Changed from image_url to image to match database
+    imageUrl: str  # Added imageUrl field that database returns
     badge: Optional[str] = None
     rating: float = 4.5
     reviews: int = 100
+    originalPrice: Optional[float] = None  # Added fields that database returns
+    discount: Optional[float] = None
+    color: Optional[str] = None
 
 
 @dataclass
 class UserRegistrationRequest:
     """User registration request data"""
-    username: str
+    username: str  # This will be populated from frontend's 'name' field
     email: str
     password: str
-    name: Optional[str] = None
+    name: Optional[str] = None  # Optional full name (same as username for frontend compatibility)
     phone: Optional[str] = None
 
 

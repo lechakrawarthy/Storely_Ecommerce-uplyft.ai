@@ -42,8 +42,8 @@ def create_app():
 
     # Initialize CORS
     CORS(app,
-         origins=["http://localhost:3000", "http://localhost:5173",
-                  "http://127.0.0.1:3000", "http://127.0.0.1:5173"],
+         origins=["http://localhost:3000", "http://localhost:8080",
+                  "http://127.0.0.1:3000", "http://127.0.0.1:8080"],
          supports_credentials=True,
          allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
          methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
@@ -86,12 +86,15 @@ def create_app():
             'message': 'Storely E-commerce API is running',
             'version': '2.0.0-refactored',
             'environment': env
-        }), 200
-
-    # Authentication endpoints
+        }), 200    # Authentication endpoints
     @app.route('/api/auth/register', methods=['POST'])
     def register():
         """User registration"""
+        return api.register()
+    
+    @app.route('/api/auth/signup', methods=['POST'])
+    def signup():
+        """User signup (alias for register)"""
         return api.register()
 
     @app.route('/api/auth/login', methods=['POST'])
@@ -165,16 +168,22 @@ def create_app():
         """Delete product (admin only)"""
         return api.delete_product(product_id)
 
+    # Categories endpoint
+    @app.route('/api/categories', methods=['GET'])
+    def get_categories():
+        """Get all product categories"""
+        return api.get_categories()
+
     # Chat endpoints
     @app.route('/api/chat', methods=['POST'])
     def chat():
         """Chat with AI assistant"""
         return api.chat()
 
-    @app.route('/api/chat/history', methods=['GET'])
-    def get_chat_history():
-        """Get chat history"""
-        return api.get_chat_history()
+    @app.route('/api/chat/history/<string:session_id>', methods=['GET'])
+    def get_chat_history(session_id):
+        """Get chat history for a session"""
+        return api.get_chat_history(session_id)
 
     @app.route('/api/chat/clear', methods=['POST'])
     def clear_chat_history():

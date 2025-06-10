@@ -33,9 +33,14 @@ class AuthService:
         return UserRepository(session)
 
     def _get_secret_key(self):
-        """Get secret key from Flask app config"""
-        from flask import current_app
-        return current_app.config['SECRET_KEY']
+        """Get secret key from Flask app config or environment"""
+        try:
+            from flask import current_app
+            return current_app.config['SECRET_KEY']
+        except RuntimeError:
+            # Fallback to environment variable if no Flask context
+            import os
+            return os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
     def _hash_password(self, password: str) -> str:
         """Hash password using bcrypt"""

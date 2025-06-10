@@ -60,13 +60,11 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     }; const handleError = () => {
         setHasError(true);
         onError?.();
-    };
-
-    // Generate responsive srcSet for better performance
+    };    // Generate responsive srcSet for better performance
     const generateSrcSet = (baseSrc: string) => {
-        if (!baseSrc.includes('placeholder.svg')) {
+        if (!baseSrc || !baseSrc.includes('placeholder.svg')) {
             // Generate different sizes for responsive images
-            return `${baseSrc}?w=400 400w, ${baseSrc}?w=800 800w, ${baseSrc}?w=1200 1200w`;
+            return baseSrc ? `${baseSrc}?w=400 400w, ${baseSrc}?w=800 800w, ${baseSrc}?w=1200 1200w` : baseSrc;
         }
         return baseSrc;
     };

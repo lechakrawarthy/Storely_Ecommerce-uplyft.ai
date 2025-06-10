@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend API Test</title>
+</head>
+<body>
+    <h1>Frontend API Test</h1>
+    <button onclick="testAPI()">Test Products API</button>
+    <div id="results"></div>
+
+    <script>
+        async function testAPI() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/products?limit=10');
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.products) {
+                    const products = data.data.products;
+                    const categories = [...new Set(products.map(p => p.category))];
+                    
+                    resultsDiv.innerHTML = `
+                        <h2>API Response:</h2>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                        <p><strong>Products Returned:</strong> ${products.length}</p>
+                        <p><strong>Categories in First 10:</strong> ${categories.join(', ')}</p>
+                        <h3>First 3 Products:</h3>
+                        <ul>
+                            ${products.slice(0, 3).map(p => 
+                                `<li>${p.name} - ${p.category} - $${p.price}</li>`
+                            ).join('')}
+                        </ul>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<p>Error: ${JSON.stringify(data)}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
